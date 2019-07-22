@@ -98,7 +98,6 @@ def delete_item_ref(item_name):
     return jsonify(None), 201
 
 # +++++++++++++++++++++++ Inventory Day ++++++++++++++++++++++++++++++++++
-# Read inventory day
 
 '''
 @app.route('/create_day', methods=['POST'])
@@ -153,6 +152,56 @@ def update_item(date):
     })
 
     return "Item Updated", 201
+
+@app.route('/<date>')
+def get_all_items(date):
+    inventory_day = inv_ref.document(date)
+    coll = inventory_day.collection('items')
+    doc_ref = coll.stream()
+    output_dict = {}
+
+    # combines item ref with the inventory quantity
+    for item in doc_ref:
+        item_dict = item.to_dict()
+        item_id = item.id
+        doc_snapshot = item_ref.document(item_id).get()
+
+        item_name = doc_snapshot.get('item_name')
+        display_name = doc_snapshot.get('display_name')
+
+        item_dict['item_name'] = item_name
+        item_dict['display_name'] = display_name
+        output_dict[item_id] = item_dict
+
+    return json.dumps(output_dict, indent=2), 201
+
+@app.route('/<date>/<item_name>')
+def get_single_item(date, item_name):
+    '''
+    Get JSON of single item
+    '''
+
+    output_dict = {}
+
+    inventory_day = inv_ref.document(date)
+    document_reference = get_item_snapshot(
+        item_name=item_name,
+        item_ref_collection=item_ref,
+        inventory_day = inventory_day,
+        error_message = "Item does not exist"
+    )
+
+    item_id = document_reference.id
+    doc_snapshot = item_ref.document(item_id).get()
+    item_name = doc_snapshot.get('item_name')
+    display_name = doc_snapshot.get('display_name')
+
+    item_dict = document_reference.get().to_dict()
+    item_dict['item_name'] = item_name
+    item_dict['display_name'] = display_name
+    output_dict[item_id] = item_dict
+
+    return json.dumps(output_dict, indent=2)
 
 @app.route('/<date>/<item_name>', methods=['DELETE'])
 def delete_item(date, item_name):

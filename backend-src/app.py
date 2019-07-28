@@ -106,6 +106,7 @@ def new_inventory_day():
     date = req.get('date')
 
     #doc_ref = create_inventory_day(inv_ref, date)
+    # check for inventory day, if exist return doc_ref, else create new
 
     doc_ref = inv_ref.document(date)
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Dimensions } from 'react-native';
-import { Card, Title, Text } from 'react-native-paper';
+import { Card, Title, Text, Divider } from 'react-native-paper';
+
+import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
 
 // TODO: BBQ-25 Replace this stub with real data
 const inventoryDayItems = [
@@ -21,13 +23,22 @@ const inventoryDayItems = [
     { item_id: 7 },
 ];
 
+
 export class InventoryGrid extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            inventoryDayItems
+            inventoryDayItems,
+            newInventoryDoc: 'Nothing happened at all'
         }
+    }
+
+    componentWillMount() {
+        const FirestoreData = new FirestoreDataUtility();
+        let inventoryDayDocument = FirestoreData.getInventoryDayDocument('2017-07-20');
+
+        this.setState({ newInventoryDoc: inventoryDayDocument });
     }
 
     render() {
@@ -37,9 +48,13 @@ export class InventoryGrid extends React.Component {
                     {this.state.inventoryDayItems.map((itemData, index) => (
                         <InventoryItem 
                             key={itemData.item_id}
-                            initialItemName={itemData.item_name}
-                            initialItemQuantity={itemData.item_quantity} />
+                            itemName={itemData.item_name}
+                            itemQuantity={itemData.item_quantity} />
                     ))}
+                </View>
+                <Divider />
+                <View style={styles.inventoryItemsContainer}>
+                    <Text>{this.state.newInventoryDoc}</Text>
                 </View>
             </ScrollView>
         );
@@ -47,33 +62,13 @@ export class InventoryGrid extends React.Component {
 }
 
 class InventoryItem extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            itemName: this.props.initialItemName,
-            itemQuantity: this.props.initialItemQuantity
-        }
-
-    }
-
-    updateItemName(newItemName) {
-        this.setState({
-            itemName: newItemName
-        });
-    }
-
-    updateItemQuantity(newItemQuantity) {
-        this.setState({
-            itemQuantity: newItemQuantity
-        });
-    }
 
     render() {
         return (
             <Card style={styles.inventoryItemCard}>
                 <View style={styles.inventoryTextBlock}>
-                    <Text style={styles.inventoryItemQuantity}>{this.state.itemQuantity}</Text>
-                    <Text style={styles.inventoryItemName}>{this.state.itemName}</Text>
+                    <Text style={styles.inventoryItemQuantity}>{this.props.itemQuantity}</Text>
+                    <Text style={styles.inventoryItemName}>{this.props.itemName}</Text>
                 </View>        
             </Card>
         );
@@ -82,8 +77,8 @@ class InventoryItem extends React.Component {
 }
 
 InventoryItem.defaultProps = {
-    initialItemName: 'Item Name',
-    initialItemQuantity: '##.#'
+    itemName: 'Item Name',
+    itemQuantity: '##.#'
 }
 
 const stylesSettings = {

@@ -2,6 +2,7 @@ import arrow
 import json
 from flask import Flask, request, jsonify
 from google.cloud import firestore
+from uuid import uuid4
 
 from helpers import (
     clean_name,
@@ -34,7 +35,6 @@ def new_item_ref():
         return None
 
     item_ref_id = create_item_ref(item_ref, item_name, is_special)
-    item_ref_path = 
 
     return "Item Ref Added"
 
@@ -99,7 +99,7 @@ def delete_item_ref(item_name):
 
     return jsonify(None), 201
 
-# +++++++++++++++++++++++ Inventory Day ++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++ Inventory Day Routes ++++++++++++++++++++++++++++++
 
 
 @app.route('/create_day', methods=['POST'])
@@ -246,6 +246,25 @@ def delete_inventory_day(date):
     inv_ref.document(date).delete()
 
     return "Inventory Day Deleted", 201
+
+#+++++++++++++++++ Inventory Service Routes ++++++++++++++++++++
+
+@app.route('/create_new_order', methods=["POST"])
+def create_new_order():
+    req = request.json
+    order_date = req.get('date')
+    party_size = req.get('party_size')
+
+    order_id = 'order -' + uuid4().hex
+    order_doc = order_ref.document(order_id)
+
+    order_doc.set({
+        'date': date,
+        'party_size': party_size,
+    })
+
+    return json.dumps(order_doc.path), 201
+
 
 #Discuss error handling
 @app.route('/')

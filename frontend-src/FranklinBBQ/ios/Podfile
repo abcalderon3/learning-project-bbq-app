@@ -28,6 +28,12 @@ target 'FranklinBBQ' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  
+  # Required by RNFirebase
+  pod 'Firebase/Core', '~> 6.3.0'
+  pod 'Firebase/Firestore', '~> 6.3.0'
+  pod 'Firebase/Auth', '~> 6.3.0'
+
   target 'FranklinBBQTests' do
     inherit! :search_paths
     # Pods for testing

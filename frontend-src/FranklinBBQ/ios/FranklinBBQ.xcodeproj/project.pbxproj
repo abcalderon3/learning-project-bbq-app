@@ -19,6 +19,10 @@
 		65559F908752A9ACCDD2037D /* libPods-FranklinBBQ-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD1BBBD36E494FEFA2106C6 /* libPods-FranklinBBQ-tvOS.a */; };
 		9EFA44F2E56152F255F80B97 /* libPods-FranklinBBQTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 155FAC9B6914DEFA43A6AE4C /* libPods-FranklinBBQTests.a */; };
 		B27EBEFB61F6B5103743FAB5 /* libPods-FranklinBBQ-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D13690B258BCD77F5BFDDB4 /* libPods-FranklinBBQ-tvOSTests.a */; };
+		B32A3D6722F239D10077A216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B32A3D6622F239D10077A216 /* GoogleService-Info.plist */; };
+		B32A3D6822F239D10077A216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B32A3D6622F239D10077A216 /* GoogleService-Info.plist */; };
+		B32A3D6922F239D10077A216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B32A3D6622F239D10077A216 /* GoogleService-Info.plist */; };
+		B32A3D6A22F239D10077A216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B32A3D6622F239D10077A216 /* GoogleService-Info.plist */; };
 		F79A2FAF5E2B5687B28E5A26 /* libPods-FranklinBBQ.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CDDCEBA4E5BAFB364168B3A /* libPods-FranklinBBQ.a */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +66,7 @@
 		A62F847537E218DF55DD9185 /* Pods-FranklinBBQ-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQ-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-FranklinBBQ-tvOSTests/Pods-FranklinBBQ-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		A724125970EB5AFCC36EEEB6 /* Pods-FranklinBBQ-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQ-tvOS.release.xcconfig"; path = "Target Support Files/Pods-FranklinBBQ-tvOS/Pods-FranklinBBQ-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		AC0C1CC2EAB0F1184EE3F28C /* Pods-FranklinBBQTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQTests.debug.xcconfig"; path = "Target Support Files/Pods-FranklinBBQTests/Pods-FranklinBBQTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B32A3D6622F239D10077A216 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CD39CE4604C5DA7E3C2BC475 /* Pods-FranklinBBQ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQ.release.xcconfig"; path = "Target Support Files/Pods-FranklinBBQ/Pods-FranklinBBQ.release.xcconfig"; sourceTree = "<group>"; };
 		DDD1BBBD36E494FEFA2106C6 /* libPods-FranklinBBQ-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FranklinBBQ-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -125,6 +130,7 @@
 		13B07FAE1A68108700A75B9A /* FranklinBBQ */ = {
 			isa = PBXGroup;
 			children = (
+				B32A3D6622F239D10077A216 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -165,6 +171,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				88A55173D4DF6A178EB4B0B5 /* Pods */,
+				9957A9F2FD85453098F15D56 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -194,8 +201,14 @@
 				AC0C1CC2EAB0F1184EE3F28C /* Pods-FranklinBBQTests.debug.xcconfig */,
 				F354F38201254E5E6978A9CC /* Pods-FranklinBBQTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		9957A9F2FD85453098F15D56 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,6 +243,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				1BEB356E5CF3A77B37DDC23C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,7 +299,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 940;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -308,6 +322,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -329,6 +344,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32A3D6822F239D10077A216 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +354,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				B32A3D6722F239D10077A216 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +363,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
+				B32A3D6922F239D10077A216 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +371,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32A3D6A22F239D10077A216 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +391,56 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		1BEB356E5CF3A77B37DDC23C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FranklinBBQ/Pods-FranklinBBQ-resources.sh",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FranklinBBQ/Pods-FranklinBBQ-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;

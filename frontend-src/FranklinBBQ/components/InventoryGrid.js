@@ -5,7 +5,7 @@ import { Card, Title, Text, Divider } from 'react-native-paper';
 import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
 
 // TODO: BBQ-25 Replace this stub with real data
-const inventoryDayItems = [
+const sampleInventoryItems = [
     {
         item_id: 1,
         item_name: 'Beef Brisket',
@@ -29,32 +29,27 @@ export class InventoryGrid extends React.Component {
         super(props)
 
         this.state = {
-            inventoryDayItems,
-            newInventoryDoc: 'Nothing happened at all'
+            inventoryItems: sampleInventoryItems
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const FirestoreData = new FirestoreDataUtility();
-        let inventoryDayDocument = FirestoreData.getInventoryDayDocument('2017-07-20');
+        let inventoryItems = await FirestoreData.getInventoryItems('daily_inventories/2017-07-20');
 
-        this.setState({ newInventoryDoc: inventoryDayDocument });
+        this.setState({ inventoryItems: inventoryItems });
     }
 
     render() {
         return (
             <ScrollView contentContainerStyle={styles.inventoryScrollView}>
                 <View style={styles.inventoryItemsContainer}>
-                    {this.state.inventoryDayItems.map((itemData, index) => (
+                    {this.state.inventoryItems.map((itemData, index) => (
                         <InventoryItem 
                             key={itemData.item_id}
-                            itemName={itemData.item_name}
-                            itemQuantity={itemData.item_quantity} />
+                            itemName={itemData.display_name}
+                            itemQuantity={itemData.item_quantity_change} />
                     ))}
-                </View>
-                <Divider />
-                <View style={styles.inventoryItemsContainer}>
-                    <Text>{this.state.newInventoryDoc}</Text>
                 </View>
             </ScrollView>
         );

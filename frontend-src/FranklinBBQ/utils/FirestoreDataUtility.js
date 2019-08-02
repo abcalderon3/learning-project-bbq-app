@@ -48,6 +48,13 @@ export class FirestoreDataUtility {
             })
         );
 
+        // Calculate data to be displayed
+        inventoryItems = inventoryItems.map( item => ({
+            ...item,
+            current_item_quantity: item.start_item_quantity - item.item_quantity_change,
+            current_perc_remaining: ((item.start_item_quantity - item.item_quantity_change)/item.start_item_quantity || 0)
+        }));
+
         return inventoryItems;
     }
 }

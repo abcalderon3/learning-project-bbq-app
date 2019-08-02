@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Dimensions } from 'react-native';
-import { Card, Title, Text, Divider } from 'react-native-paper';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Surface, Text } from 'react-native-paper';
 
 import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
 
@@ -48,7 +48,8 @@ export class InventoryGrid extends React.Component {
                         <InventoryItem 
                             key={itemData.item_id}
                             itemName={itemData.display_name}
-                            itemQuantity={itemData.item_quantity_change} />
+                            itemQuantity={itemData.current_item_quantity}
+                            itemPercRemaining={itemData.current_perc_remaining} />
                     ))}
                 </View>
             </ScrollView>
@@ -57,15 +58,44 @@ export class InventoryGrid extends React.Component {
 }
 
 class InventoryItem extends React.Component {
-
     render() {
+        let remainingColor = '#C8C8C8';
+        let itemCardOpacity = 1;
+        if(this.props.itemPercRemaining >= 0.75) {
+            remainingColor = '#8CE53D'; // Green
+        } else if (this.props.itemPercRemaining >= 0.25) {
+            remainingColor = '#F2D557'; // Yellow
+        } else if (this.props.itemPercRemaining > 0) {
+            remainingColor = '#F27C57'; // Red
+        } else {
+            itemCardOpacity = 0.5;
+        }
+
+        let dynamicStyles = {
+            quantityVisualBack: {
+                flex: (1 - this.props.itemPercRemaining),
+                backgroundColor: '#C8C8C8',
+            },
+            quantityVisualColor: {
+                flex: this.props.itemPercRemaining,
+                backgroundColor: remainingColor,
+            },
+            inventoryItemCardDynamic: {
+                opacity: itemCardOpacity,
+            },
+        };
+
         return (
-            <Card style={styles.inventoryItemCard}>
+            <Surface style={[styles.inventoryItemCard, dynamicStyles.inventoryItemCardDynamic]}>
+                <View style={styles.inventoryItemQuantityVisual}>
+                    <View style={dynamicStyles.quantityVisualBack}/>
+                    <View style={dynamicStyles.quantityVisualColor}/>
+                </View>
                 <View style={styles.inventoryTextBlock}>
                     <Text style={styles.inventoryItemQuantity}>{this.props.itemQuantity}</Text>
                     <Text style={styles.inventoryItemName}>{this.props.itemName}</Text>
-                </View>        
-            </Card>
+                </View>
+            </Surface>
         );
         
     }
@@ -73,7 +103,8 @@ class InventoryItem extends React.Component {
 
 InventoryItem.defaultProps = {
     itemName: 'Item Name',
-    itemQuantity: '##.#'
+    itemQuantity: '##.#',
+    itemPercRemaining: 0,
 }
 
 const stylesSettings = {
@@ -96,11 +127,18 @@ const stylesSettings = {
         marginTop: 15,
         justifyContent: 'center',
         alignItems: 'center',
+        elevation: 3,
+        opacity: 0.5,
     },
     inventoryTextBlock: {
         flex: 1, 
         flexDirection: 'column', 
         justifyContent: 'center',
+    },
+    inventoryItemQuantityVisual: {
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
     },
     inventoryItemQuantity: {
         textAlign: 'center',

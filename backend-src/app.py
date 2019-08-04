@@ -255,16 +255,21 @@ def create_new_order():
     order_date = req.get('date')
     party_size = req.get('party_size')
 
-    order_id = 'order -' + uuid4().hex
+    order_id = 'order-' + uuid4().hex
     order_doc = order_ref.document(order_id)
 
     order_doc.set({
-        'date': date,
+        'date': order_date,
         'party_size': party_size,
     })
 
     return json.dumps(order_doc.path), 201
 
+# edit party_size
+# add item to order
+# edit item (quantity)
+# delete item
+# delete order
 
 #Discuss error handling
 @app.route('/')

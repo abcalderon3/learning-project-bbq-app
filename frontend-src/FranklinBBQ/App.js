@@ -15,7 +15,7 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
-import { Provider as PaperProvider, Divider } from 'react-native-paper';
+import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 
 import {
   // Header,
@@ -30,54 +30,24 @@ import { InventoryGrid } from './components/InventoryGrid';
 
 const App = () => {
   return (
-    <PaperProvider>
-      <Fragment>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={styles.scrollView}>
-            <Header />
-            <InventoryGrid />
-            <Divider />
-            {global.HermesInternal == null ? null : (
-              <View style={styles.engine}>
-                <Text style={styles.footer}>Engine: Hermes</Text>
-              </View>
-            )}
-            <View style={styles.body}>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Step One</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                  screen and then come back to see your edits.
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>See All Your Changes</Text>
-                <Text style={styles.sectionDescription}>
-                  <ReloadInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Debug</Text>
-                <Text style={styles.sectionDescription}>
-                  <DebugInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Learn More</Text>
-                <Text style={styles.sectionDescription}>
-                  Read the docs to discover what to do next:
-                </Text>
-              </View>
-              <LearnMoreLinks />
-            </View>
-          </ScrollView>
+    <PaperProvider theme={theme}>
+        <SafeAreaView style={{flex: 1, backgroundColor: theme.colors.background,}}>
+          <Header />
+          <InventoryGrid />
         </SafeAreaView>
-      </Fragment>
     </PaperProvider>
   );
+};
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 10,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#68C0C0',
+    secondary: '#E6740F',
+    background: '#F1F0E1',
+  }
 };
 
 const styles = StyleSheet.create({

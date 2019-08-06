@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 
 import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
+import { ThemeProvider } from '@callstack/react-theme-provider';
 
 // TODO: BBQ-25 Replace this stub with real data
 const sampleInventoryItems = [
@@ -128,7 +129,8 @@ const stylesSettings = {
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 3,
-        opacity: 0.5,
+        borderRadius: 10,
+        overflow: 'hidden',
     },
     inventoryTextBlock: {
         flex: 1, 
@@ -143,6 +145,7 @@ const stylesSettings = {
     inventoryItemQuantity: {
         textAlign: 'center',
         fontSize: 48,
+        fontFamily: "Open24DisplaySt",
     },
     inventoryItemName: {
         textAlign: 'center',

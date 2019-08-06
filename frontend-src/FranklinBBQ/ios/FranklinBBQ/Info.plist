@@ -54,6 +54,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>UIAppFonts</key>
-	<array/>
+	<array>
+		<string>Open24DisplaySt.ttf</string>
+	</array>
 </dict>
 </plist>

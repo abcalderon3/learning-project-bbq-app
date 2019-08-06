@@ -5,9 +5,9 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* FranklinBBQTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* FranklinBBQTests.m */; };
+		1162DF1D89D444FD8F9F7900 /* Open24DisplaySt.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1EE951DDCC4447D93FFE9E4 /* Open24DisplaySt.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -69,6 +69,7 @@
 		B32A3D6622F239D10077A216 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CD39CE4604C5DA7E3C2BC475 /* Pods-FranklinBBQ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQ.release.xcconfig"; path = "Target Support Files/Pods-FranklinBBQ/Pods-FranklinBBQ.release.xcconfig"; sourceTree = "<group>"; };
 		DDD1BBBD36E494FEFA2106C6 /* libPods-FranklinBBQ-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FranklinBBQ-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1EE951DDCC4447D93FFE9E4 /* Open24DisplaySt.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Open24DisplaySt.ttf; path = ../assets/fonts/Open24DisplaySt.ttf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F354F38201254E5E6978A9CC /* Pods-FranklinBBQTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FranklinBBQTests.release.xcconfig"; path = "Target Support Files/Pods-FranklinBBQTests/Pods-FranklinBBQTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -207,6 +208,7 @@
 		9957A9F2FD85453098F15D56 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E1EE951DDCC4447D93FFE9E4 /* Open24DisplaySt.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -355,6 +357,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				B32A3D6722F239D10077A216 /* GoogleService-Info.plist in Resources */,
+				1162DF1D89D444FD8F9F7900 /* Open24DisplaySt.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,7 +393,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		1BEB356E5CF3A77B37DDC23C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

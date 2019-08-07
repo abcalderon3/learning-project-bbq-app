@@ -1,6 +1,7 @@
 from google.cloud import firestore
 import arrow
 from uuid import uuid4
+from initializers import initial_items
 
 # returns a lowercase object, no beginning or trailing whitespaces
 # all spaces replaced with dashes
@@ -19,6 +20,12 @@ def to_display_name(name):
     name_list = map(lambda x: x.capitalize(), split_name)
     display_name = ' '.join(name_list)
     return display_name
+
+def _now():
+    time_zone = 'US/Eastern'
+    local_time = arrow.utcnow().to(time_zone)
+    formatted_time = local_time.format('YYYY-MM-DD HH:mm:ss')
+    return formatted_time
 
 def _get_ref_id(collection, key, value):
     item_ref = collection
@@ -51,12 +58,44 @@ def _query_exists(collection, search_term, value):
 
     return query_exists
 
+def create_inventory_day(inv_collection, item_ref_collection, date):
+    timestamp = _now()
+    new_doc = inv_collection.document(date)
+    new_doc.set({u'timestamp': timestamp})
+
+    # define 'items' collection
+    inv_items_collection = new_doc.collection('items')
+
+    initial_item_list = initial_items()
+
+    for item in initial_item_list:
+        # Create item_ref
+        item_id = create_item_ref(
+            collection=item_ref_collection,
+            item_name=item.get('item_name'),
+            special=item.get('special')
+        )
+
+        print(item_id)
+
+        # insert item_id into inventory_items_collection
+        item_doc_ref = inv_items_collection.document(item_id)
+
+        # set item quantity
+        item_doc_ref.set({
+            'start_item_quantity': item.get('start_item_quantity'),
+            'item_quantity_change': item.get('item_quantity_change'),
+        })
+
+    return new_doc
+
 def create_item_ref(collection, item_name, special=False):
     # Remove whitespace and capital letters
     cleaned_item_name = clean_name(item_name)
     item_id = cleaned_item_name + '-' + uuid4().hex
     display_name = to_display_name(cleaned_item_name)
 
+    # Check if item ref already exists, if so, then
     query_exists = _query_exists(
         collection=collection,
         search_term='item_name',
@@ -73,9 +112,9 @@ def create_item_ref(collection, item_name, special=False):
     }
 
     document_reference = collection.document(item_id)
-    item_ref_id = document_reference.set(payload)
+    document_reference.set(payload)
 
-    return item_ref_id
+    return document_reference.id
 
 def get_item_snapshot(item_name, item_ref_collection, inventory_day, error_message):
     cleaned_item_name = clean_name(item_name)

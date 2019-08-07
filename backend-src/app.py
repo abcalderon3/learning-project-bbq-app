@@ -2,13 +2,15 @@ import arrow
 import json
 from flask import Flask, request, jsonify
 from google.cloud import firestore
+from uuid import uuid4
 
 from helpers import (
     clean_name,
     to_display_name,
     _get_ref_id,
     create_item_ref,
-    get_item_snapshot
+    get_item_snapshot,
+    create_inventory_day,
 )
 
 app = Flask(__name__)
@@ -97,28 +99,38 @@ def delete_item_ref(item_name):
 
     return jsonify(None), 201
 
-# +++++++++++++++++++++++ Inventory Day ++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++ Inventory Day Routes ++++++++++++++++++++++++++++++
 
-'''
+
 @app.route('/create_day', methods=['POST'])
 def new_inventory_day():
     req = request.json
     date = req.get('date')
 
-    #doc_ref = create_inventory_day(inv_ref, date)
-    # check for inventory day, if exist return doc_ref, else create new
-
     doc_ref = inv_ref.document(date)
+    doc_snapshot = doc_ref.get()
 
-    return date, 201
-'''
+    if not doc_snapshot.exists:
+        return_ref = create_inventory_day(
+            inv_collection = inv_ref,
+            item_ref_collection = item_ref,
+            date = date,
+        )
+    else:
+        return_ref = doc_ref
+
+    # Turn document reference into string
+    return_ref_json = json.dumps(return_ref.path)
+
+    return return_ref_json, 201
+
 
 @app.route('/add_item', methods=['POST'])
 def add_item():
     req = request.json
     date = req.get('date')
     item_name = req.get('item_name')
-    item_quantity = req.get('item_quantity')
+    start_item_quantity = req.get('start_item_quantity')
     inventory_day = inv_ref.document(date)
 
     new_item = get_item_snapshot(
@@ -129,7 +141,7 @@ def add_item():
     )
 
     new_item.set({
-        'item_quantity': item_quantity,
+        'start_item_quantity': start_item_quantity,
     })
 
     return "Item Added", 201
@@ -138,7 +150,7 @@ def add_item():
 def update_item(date):
     req = request.json
     item_name = req.get('item_name')
-    item_quantity = req.get('item_quantity')
+    start_item_quantity = req.get('start_item_quantity')
     inventory_day = inv_ref.document(date)
 
     document_reference = get_item_snapshot(
@@ -149,7 +161,7 @@ def update_item(date):
     )
 
     document_reference.update({
-        'item_quantity': item_quantity,
+        'start_item_quantity': start_item_quantity,
     })
 
     return "Item Updated", 201
@@ -234,6 +246,25 @@ def delete_inventory_day(date):
     inv_ref.document(date).delete()
 
     return "Inventory Day Deleted", 201
+
+#+++++++++++++++++ Inventory Service Routes ++++++++++++++++++++
+
+@app.route('/create_new_order', methods=["POST"])
+def create_new_order():
+    req = request.json
+    order_date = req.get('date')
+    party_size = req.get('party_size')
+
+    order_id = 'order -' + uuid4().hex
+    order_doc = order_ref.document(order_id)
+
+    order_doc.set({
+        'date': date,
+        'party_size': party_size,
+    })
+
+    return json.dumps(order_doc.path), 201
+
 
 #Discuss error handling
 @app.route('/')

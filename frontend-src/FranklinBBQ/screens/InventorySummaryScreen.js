@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 
-import { InventoryGrid } from '../components/InventoryGrid';
+import InventoryGrid from '../components/InventoryGrid';
 
 const InventorySummaryScreen = () => {
     const [selectedDate, setSelectedDate] = useState(moment('2017-07-20'));
@@ -15,13 +15,13 @@ const InventorySummaryScreen = () => {
 
     return (
         <View style={styles.screenContainer}>
-            <DateButton date={selectedDate} onDateChange={handleDateChange} />
+            <DateButton date={selectedDate} dateChange={handleDateChange} />
             <InventoryGrid inventoryDateString={selectedDateString} />
         </View>
     );
 };
 
-const DateButton = ({date, onDateChange}) => {
+const DateButton = ({date, dateChange}) => {
     return (
         <DatePicker
             style={styles.datePicker}
@@ -31,7 +31,7 @@ const DateButton = ({date, onDateChange}) => {
             format="YYYY-MM-DD"
             confirmBtnText="Done"
             cancelBtnText="Cancel"
-            onDateChange={onDateChange}
+            onDateChange={dateChange}
         />
     );
 };

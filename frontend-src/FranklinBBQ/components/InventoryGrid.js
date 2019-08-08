@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 
 import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
 import { InventoryServiceUtility } from '../utils/InventoryServiceUtility';
 
-// TODO: BBQ-25 Replace this stub with real data
 const sampleInventoryItems = [
     {
         item_id: 1,
@@ -24,42 +23,47 @@ const sampleInventoryItems = [
     { item_id: 7 },
 ];
 
+// Displays inventory items based on fetched data
+const InventoryGrid = ({ inventoryDateString }) => {
+    const [inventoryItems, setInventoryItems] = useState(sampleInventoryItems);
+    const [isLoading, toggleLoading] = useState(false);
 
-export class InventoryGrid extends React.Component {
-    constructor(props) {
-        super(props)
+    useEffect(() => {
+        const fetchInventoryData = async () => {
+            try {
+                toggleLoading(true);
+                const InventoryService = new InventoryServiceUtility();
+                // Request for backend to create or provide the selected day's inventory day document path
+                let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(inventoryDateString) : 'daily_inventories/' + inventoryDateString;
 
-        this.state = {
-            inventoryItems: sampleInventoryItems
-        }
-    }
+                const FirestoreData = new FirestoreDataUtility();
+                // Get Inventory Day document data from Firestore
+                let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
 
-    async componentDidMount() {
-        const InventoryService = new InventoryServiceUtility();
-        let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(this.props.inventoryDateString) : 'daily_inventories/' + this.props.inventoryDateString;
+                setInventoryItems(inventoryItems);
+                toggleLoading(false);
+            } catch (error) {
+                console.log(error);
+                toggleLoading(false);
+            }
+        };
+        fetchInventoryData();
+    })
 
-        const FirestoreData = new FirestoreDataUtility();
-        let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
-
-        this.setState({ inventoryItems: inventoryItems });
-    }
-
-    render() {
-        return (
-            <ScrollView contentContainerStyle={styles.inventoryScrollView}>
-                <View style={styles.inventoryItemsContainer}>
-                    {this.state.inventoryItems.map((itemData, index) => (
-                        <InventoryItem 
-                            key={itemData.item_id}
-                            itemName={itemData.display_name}
-                            itemQuantity={itemData.current_item_quantity}
-                            itemPercRemaining={itemData.current_perc_remaining} />
-                    ))}
-                </View>
-            </ScrollView>
-        );
-    }
-}
+    return (
+        <ScrollView contentContainerStyle={styles.inventoryScrollView}>
+            <View style={styles.inventoryItemsContainer}>
+                {inventoryItems.map((itemData, index) => (
+                    <InventoryItem 
+                        key={itemData.item_id}
+                        itemName={itemData.display_name}
+                        itemQuantity={itemData.current_item_quantity}
+                        itemPercRemaining={itemData.current_perc_remaining} />
+                ))}
+            </View>
+        </ScrollView>
+    );
+};
 
 class InventoryItem extends React.Component {
     render() {
@@ -157,3 +161,5 @@ const stylesSettings = {
 };
 
 const styles = StyleSheet.create(stylesSettings);
+
+export default InventoryGrid;

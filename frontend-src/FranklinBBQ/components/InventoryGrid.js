@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 
 import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
-import { ThemeProvider } from '@callstack/react-theme-provider';
+import { InventoryServiceUtility } from '../utils/InventoryServiceUtility';
 
 // TODO: BBQ-25 Replace this stub with real data
 const sampleInventoryItems = [
@@ -35,8 +35,11 @@ export class InventoryGrid extends React.Component {
     }
 
     async componentDidMount() {
+        const InventoryService = new InventoryServiceUtility();
+        let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(this.props.inventoryDateString) : 'daily_inventories/' + this.props.inventoryDateString;
+
         const FirestoreData = new FirestoreDataUtility();
-        let inventoryItems = await FirestoreData.getInventoryItems('daily_inventories/2017-07-20');
+        let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
 
         this.setState({ inventoryItems: inventoryItems });
     }

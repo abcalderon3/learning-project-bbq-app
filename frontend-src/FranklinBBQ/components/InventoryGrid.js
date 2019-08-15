@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView } from 'react-native';
+import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
-import { FirestoreDataUtility } from '../utils/FirestoreDataUtility';
+import FirestoreDataUtility from '../utils/FirestoreDataUtility';
 import { InventoryServiceUtility } from '../utils/InventoryServiceUtility';
 
 const sampleInventoryItems = [
@@ -24,44 +24,65 @@ const sampleInventoryItems = [
 ];
 
 // Displays inventory items based on fetched data
-const InventoryGrid = ({ inventoryDateString }) => {
+const InventoryGrid = ({ inventoryDateString, editMode }) => {
     const [inventoryItems, setInventoryItems] = useState(sampleInventoryItems);
-    const [isLoading, toggleLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+
+    const InventoryService = new InventoryServiceUtility();
+    const FirestoreData = new FirestoreDataUtility();
 
     useEffect(() => {
         const fetchInventoryData = async () => {
-            try {
-                toggleLoading(true);
-                const InventoryService = new InventoryServiceUtility();
-                // Request for backend to create or provide the selected day's inventory day document path
-                let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(inventoryDateString) : 'daily_inventories/' + inventoryDateString;
+            setLoading(true);
 
-                const FirestoreData = new FirestoreDataUtility();
-                // Get Inventory Day document data from Firestore
-                let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
+            // Request for backend to create or provide the selected day's inventory day document path
+            let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(inventoryDateString) : 'daily_inventories/' + inventoryDateString;
 
-                setInventoryItems(inventoryItems);
-                toggleLoading(false);
-            } catch (error) {
-                console.log(error);
-                toggleLoading(false);
-            }
+            // Get Inventory Day document data from Firestore
+            let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
+
+            setInventoryItems(inventoryItems);
+            setLoading(false);
         };
         fetchInventoryData();
-    })
+    }, [inventoryDateString]);
+
+    const handleItemStartQuantityChange = (itemId, newItemStartQuantity) => {
+        let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
+
+        setInventoryItems(newInventoryItems);
+        // TODO:  Add call to backend to update Firestore
+    };
+
+    let inventoryItemsToRender;
+    if (editMode) {
+        inventoryItemsToRender = inventoryItems.map((itemData, index) => (
+            <InventoryItemEditable 
+                itemName={itemData.display_name} 
+                itemQuantity={itemData.start_item_quantity}
+                key={itemData.item_id}
+                itemId={itemData.item_id}
+                handleItemStartQuantityChange={handleItemStartQuantityChange}
+                />
+        ));
+    } else {
+        inventoryItemsToRender = inventoryItems.map((itemData, index) => (
+            <InventoryItem 
+                itemName={itemData.display_name}
+                itemQuantity={itemData.current_item_quantity}
+                itemPercRemaining={itemData.current_perc_remaining} 
+                key={itemData.item_id} />
+        ));
+    }
 
     return (
-        <ScrollView contentContainerStyle={styles.inventoryScrollView}>
-            <View style={styles.inventoryItemsContainer}>
-                {inventoryItems.map((itemData, index) => (
-                    <InventoryItem 
-                        key={itemData.item_id}
-                        itemName={itemData.display_name}
-                        itemQuantity={itemData.current_item_quantity}
-                        itemPercRemaining={itemData.current_perc_remaining} />
-                ))}
-            </View>
-        </ScrollView>
+        <KeyboardAvoidingView behavior='padding'>
+            <ScrollView contentContainerStyle={styles.inventoryScrollView}>
+                <View style={styles.inventoryItemsContainer}>
+                    {inventoryItemsToRender}
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -94,20 +115,62 @@ class InventoryItem extends React.Component {
         };
 
         return (
-            <Surface style={[styles.inventoryItemCard, dynamicStyles.inventoryItemCardDynamic]}>
-                <View style={styles.inventoryItemQuantityVisual}>
-                    <View style={dynamicStyles.quantityVisualBack}/>
-                    <View style={dynamicStyles.quantityVisualColor}/>
-                </View>
-                <View style={styles.inventoryTextBlock}>
-                    <Text style={styles.inventoryItemQuantity}>{this.props.itemQuantity}</Text>
-                    <Text style={styles.inventoryItemName}>{this.props.itemName}</Text>
-                </View>
-            </Surface>
+            <View style={styles.inventoryItemCardContainer}>
+                <Surface style={[styles.inventoryItemCard, dynamicStyles.inventoryItemCardDynamic]}>
+                    <View style={styles.inventoryItemQuantityVisual}>
+                        <View style={dynamicStyles.quantityVisualBack}/>
+                        <View style={dynamicStyles.quantityVisualColor}/>
+                    </View>
+                    <View style={styles.inventoryTextBlock}>
+                        <Text style={styles.inventoryItemQuantity}>{this.props.itemQuantity}</Text>
+                        <Text style={styles.inventoryItemName}>{this.props.itemName}</Text>
+                    </View>
+                </Surface>
+            </View>
         );
         
     }
 }
+
+const InventoryItemEditable = ({itemName, itemQuantity, itemId, handleItemStartQuantityChange}) => {
+    const [isEditing, setEditing] = useState(false);
+    const toggleEditing = () => setEditing(!isEditing);
+    const [itemQuantityChanged, setQuantityChange] = useState(0.0);
+
+    const handleQuantityChange = (event) => {
+        handleItemStartQuantityChange(itemId, parseFloat(event.nativeEvent.text));
+        setQuantityChange(parseFloat(event.nativeEvent.text));
+        toggleEditing();
+    }
+
+    let inventoryItemQuantityBlock;
+    if (isEditing) {
+        inventoryItemQuantityBlock = 
+            <TextInput 
+                onEndEditing={handleQuantityChange} 
+                keyboardType='numeric'
+                autoFocus={true}
+                style={styles.inventoryItemQuantity}
+            />
+    } else {
+        inventoryItemQuantityBlock = <Text style={styles.inventoryItemQuantity}>{itemQuantity}</Text>
+    }
+
+    return (
+        <View style={styles.inventoryItemCardContainer}>
+            <TouchableRipple onPress={toggleEditing} style={{borderRadius: 10}}>
+                <Surface style={styles.inventoryItemCard}>
+                    <View style={styles.inventoryTextBlock}>
+                        {inventoryItemQuantityBlock}
+                        <Text style={styles.inventoryItemName}>{itemName}</Text>
+                        <Text>{itemQuantityChanged}</Text>
+                    </View>
+                </Surface>
+            </TouchableRipple>
+        </View>
+       
+    );
+};
 
 InventoryItem.defaultProps = {
     itemName: 'Item Name',
@@ -129,10 +192,12 @@ const stylesSettings = {
         paddingTop: 50,
         paddingBottom: 50,
     },
+    inventoryItemCardContainer: {
+        paddingTop: 15
+    },
     inventoryItemCard: {
         width: 115,
         height: 130,
-        marginTop: 15,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 3,

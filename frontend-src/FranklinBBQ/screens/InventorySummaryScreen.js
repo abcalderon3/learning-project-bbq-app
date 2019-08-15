@@ -16,7 +16,7 @@ const InventorySummaryScreen = () => {
     return (
         <View style={styles.screenContainer}>
             <DateButton date={selectedDate} dateChange={handleDateChange} />
-            <InventoryGrid inventoryDateString={selectedDateString} />
+            <InventoryGrid inventoryDateString={selectedDateString} editMode={true} />
         </View>
     );
 };

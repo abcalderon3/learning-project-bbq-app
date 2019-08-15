@@ -1,6 +1,6 @@
 import firebase from 'react-native-firebase';
 
-export class FirestoreDataUtility {
+export default class FirestoreDataUtility {
     constructor() {
         firebase.auth().signInAnonymously().catch((error) => { console.log(error); });
         this.db = firebase.firestore();

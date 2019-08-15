@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
 import FirestoreDataUtility from '../utils/FirestoreDataUtility';
-import { InventoryServiceUtility } from '../utils/InventoryServiceUtility';
+import InventoryServiceUtility from '../utils/InventoryServiceUtility';
 
 const sampleInventoryItems = [
     {
@@ -36,7 +36,7 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
             setLoading(true);
 
             // Request for backend to create or provide the selected day's inventory day document path
-            let inventoryDayDocPath = InventoryService.config.enabled ? await InventoryService.getInventoryDay(inventoryDateString) : 'daily_inventories/' + inventoryDateString;
+            let inventoryDayDocPath = await InventoryService.getInventoryDay(inventoryDateString);
 
             // Get Inventory Day document data from Firestore
             let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
@@ -47,11 +47,16 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
         fetchInventoryData();
     }, [inventoryDateString]);
 
-    const handleItemStartQuantityChange = (itemId, newItemStartQuantity) => {
-        let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
+    const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
+        let itemName = inventoryItems.find(item => item.item_id === itemId).item_name;  // Using a lookup instead of passing it through the callback, since this will be removed in BBQ-42
+        let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity, itemName);
+        if (updateSuccessful) {
+            let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
 
-        setInventoryItems(newInventoryItems);
-        // TODO:  Add call to backend to update Firestore
+            setInventoryItems(newInventoryItems);
+        } else {
+            Alert.alert('Whoops!', 'Failed to update the item.')
+        }
     };
 
     let inventoryItemsToRender;
@@ -135,11 +140,9 @@ class InventoryItem extends React.Component {
 const InventoryItemEditable = ({itemName, itemQuantity, itemId, handleItemStartQuantityChange}) => {
     const [isEditing, setEditing] = useState(false);
     const toggleEditing = () => setEditing(!isEditing);
-    const [itemQuantityChanged, setQuantityChange] = useState(0.0);
 
     const handleQuantityChange = (event) => {
         handleItemStartQuantityChange(itemId, parseFloat(event.nativeEvent.text));
-        setQuantityChange(parseFloat(event.nativeEvent.text));
         toggleEditing();
     }
 
@@ -163,7 +166,6 @@ const InventoryItemEditable = ({itemName, itemQuantity, itemId, handleItemStartQ
                     <View style={styles.inventoryTextBlock}>
                         {inventoryItemQuantityBlock}
                         <Text style={styles.inventoryItemName}>{itemName}</Text>
-                        <Text>{itemQuantityChanged}</Text>
                     </View>
                 </Surface>
             </TouchableRipple>

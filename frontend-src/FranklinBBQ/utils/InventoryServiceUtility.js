@@ -3,23 +3,25 @@ const config = {
     enabled: false
 };
 
-export class InventoryServiceUtility {
+const commonHeaders = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+};
+
+class InventoryServiceUtility {
     constructor() {
         this.config = config;
     }
 
     // Get the inventory day document path for a given date (expecting backend to create if it doesn't exist)
-    async getInventoryDay(inventoryDate) {
+    async getInventoryDay(inventoryDateString) {
         let inventoryDayDocPath = await fetch(
             this.config.serviceUrl + 'create_day',
             {
                 method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
+                headers: commonHeaders,
                 body: JSON.stringify({
-                    date: inventoryDate
+                    date: inventoryDateString
                 })
             }
         )
@@ -28,4 +30,42 @@ export class InventoryServiceUtility {
 
         return inventoryDayDocPath;
     }
+
+    // Call backend to update the Starting Item Quantity for the specified Inventory Day
+    // TODO: After BBQ-42, remove itemName from request
+    async updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity, itemName) {
+        const requestBody = {
+            item_id: itemId,
+            start_item_quantity: newItemStartQuantity,
+            item_name: itemName
+        };
+
+        let responseStatus = await fetch(
+            this.config.serviceUrl + inventoryDateString,
+            {
+                method: 'PUT',
+                headers: commonHeaders,
+                body: JSON.stringify(requestBody)
+            }
+        )
+        .then(response => response.status)
+        .catch(error => console.error(error));
+
+        return responseStatus === 201 ? true : false;
+    }
+};
+
+class InventoryServiceUtilityStub extends InventoryServiceUtility {
+    getInventoryDay(inventoryDateString) {
+        return 'daily_inventories/' + inventoryDateString;
+    }
+
+    updateItemStartQuantity() {
+        return true;
+    }
+
 }
+
+// Exports the real Inventory Service Utility if backend is enabled; otherwise, provides the stub
+let UtilityExported = config.enabled ? InventoryServiceUtility : InventoryServiceUtilityStub;
+export default UtilityExported;

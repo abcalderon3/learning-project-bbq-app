@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
-import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 
 import InventoryGrid from '../components/InventoryGrid';
@@ -15,24 +13,8 @@ const InventorySummaryScreen = () => {
 
     return (
         <View style={styles.screenContainer}>
-            <DateButton date={selectedDate} dateChange={handleDateChange} />
-            <InventoryGrid inventoryDateString={selectedDateString} editMode={true} />
+            <InventoryGrid inventoryDateString={selectedDateString} editMode={false} />
         </View>
-    );
-};
-
-const DateButton = ({date, dateChange}) => {
-    return (
-        <DatePicker
-            style={styles.datePicker}
-            date={date}
-            mode="date"
-            placeholder="Select Date..."
-            format="YYYY-MM-DD"
-            confirmBtnText="Done"
-            cancelBtnText="Cancel"
-            onDateChange={dateChange}
-        />
     );
 };
 
@@ -40,10 +22,6 @@ const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
         alignItems: 'center'
-    },
-    datePicker: {
-        width: 150,
-        paddingTop: 30
     }
 });
 

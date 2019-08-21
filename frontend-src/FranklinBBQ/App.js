@@ -4,16 +4,19 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
+import { createAppContainer } from 'react-navigation';
 
 import Header from './components/Header';
-import InventorySummaryScreen from './screens/InventorySummaryScreen';
+import Navigator from './components/Navigator';
+
+const AppContainer = createAppContainer(Navigator);
 
 const App = () => {
   return (
     <PaperProvider theme={theme}>
         <SafeAreaView style={styles.safeContainer}>
           <Header />
-          <InventorySummaryScreen />
+          <AppContainer />
         </SafeAreaView>
     </PaperProvider>
   );

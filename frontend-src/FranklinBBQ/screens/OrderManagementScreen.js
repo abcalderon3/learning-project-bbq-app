@@ -12,7 +12,8 @@ const OrderManagementScreen = () => {
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  SafeAreaView,
+  View,
   StyleSheet,
 } from 'react-native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
@@ -14,10 +14,10 @@ const AppContainer = createAppContainer(Navigator);
 const App = () => {
   return (
     <PaperProvider theme={theme}>
-        <SafeAreaView style={styles.safeContainer}>
-          <Header />
-          <AppContainer />
-        </SafeAreaView>
+      <View style={styles.safeContainer}>
+        <Header />
+        <AppContainer />
+      </View>
     </PaperProvider>
   );
 };

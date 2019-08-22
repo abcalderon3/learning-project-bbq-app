@@ -1,32 +1,50 @@
 import React from 'react';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { createBottomTabNavigator } from 'react-navigation';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementScreen from '../screens/InventoryManagementScreen';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
 
+const colors = {
+    primary: '#68C0C0',
+    secondary: '#E6740F',
+    inactive: '#605f5a',
+};
+
 InventorySummaryScreen.navigationOptions = {
-    title: 'Today',
-    tabBarIcon: <FontAwesome5 name={'store'} size={18} />
+    title: 'TODAY',
+    tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
 };
 
 InventoryManagementScreen.navigationOptions = {
-    title: 'Inventory',
-    tabBarIcon: <FontAwesome5 name={'edit'} size={18} />
+    title: 'INVENTORY',
+    tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'edit'} size={focused ? 18 : 14} color={tintColor} />
 };
 
 OrderManagementScreen.navigationOptions = {
-    title: 'Orders',
-    tabBarIcon: <FontAwesome5 name={'shopping-bag'} size={18} />
+    title: 'ORDERS',
+    tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'shopping-bag'} size={focused ? 18 : 14} color={tintColor} />
 };
 
-const Navigator = createMaterialBottomTabNavigator({
+const Navigator = createBottomTabNavigator({
     OrderManagement: OrderManagementScreen,
     InventorySummary: InventorySummaryScreen,
     InventoryManagement: InventoryManagementScreen
 },{
     initialRouteName: 'InventorySummary',
+    tabBarOptions: {
+        activeTintColor: colors.secondary,
+        inactiveTintColor: colors.inactive,
+        style: {
+            backgroundColor: colors.primary,
+        },
+        labelStyle: {
+            fontFamily: 'AvenirNextCondensed-Bold',
+            fontSize: 16
+        },
+    }
+    
 });
 
 export default Navigator;

@@ -149,16 +149,11 @@ def add_item():
 @app.route('/<date>', methods=['PUT'])
 def update_item(date):
     req = request.json
-    item_name = req.get('item_name')
+    item_id = req.get('item_id')
     start_item_quantity = req.get('start_item_quantity')
     inventory_day = inv_ref.document(date)
 
-    document_reference = get_item_snapshot(
-        item_name=item_name,
-        item_ref_collection=item_ref,
-        inventory_day = inventory_day,
-        error_message = "Item does not exist"
-    )
+    document_reference = inventory_day.collection('items').document(item_id)
 
     document_reference.update({
         'start_item_quantity': start_item_quantity,

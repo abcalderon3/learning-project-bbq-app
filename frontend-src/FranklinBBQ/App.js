@@ -26,14 +26,14 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { Header } from './components/Header';
-import { InventoryGrid } from './components/InventoryGrid';
+import InventorySummaryScreen from './screens/InventorySummaryScreen';
 
 const App = () => {
   return (
     <PaperProvider theme={theme}>
         <SafeAreaView style={{flex: 1, backgroundColor: theme.colors.background,}}>
           <Header />
-          <InventoryGrid />
+          <InventorySummaryScreen />
         </SafeAreaView>
     </PaperProvider>
   );

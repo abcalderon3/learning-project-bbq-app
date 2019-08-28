@@ -48,8 +48,7 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
     }, [inventoryDateString]);
 
     const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
-        let itemName = inventoryItems.find(item => item.item_id === itemId).item_name;  // Using a lookup instead of passing it through the callback, since this will be removed in BBQ-42
-        let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity, itemName);
+        let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity);
         if (updateSuccessful) {
             let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
 

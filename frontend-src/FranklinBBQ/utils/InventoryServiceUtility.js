@@ -37,12 +37,10 @@ class InventoryServiceUtility {
     }
 
     // Call backend to update the Starting Item Quantity for the specified Inventory Day
-    // TODO: After BBQ-42, remove itemName from request
-    async updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity, itemName) {
+    async updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity) {
         const requestBody = {
             item_id: itemId,
             start_item_quantity: newItemStartQuantity,
-            item_name: itemName
         };
 
         let responseStatus = await fetch(

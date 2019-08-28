@@ -1,20 +1,16 @@
 import React from 'react';
-import { createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementScreen from '../screens/InventoryManagementScreen';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
+import OrderScreen from '../screens/OrderScreen';
 
 const colors = {
     primary: '#68C0C0',
     secondary: '#E6740F',
     inactive: '#605f5a',
-};
-
-InventorySummaryScreen.navigationOptions = {
-    title: 'TODAY',
-    tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
 };
 
 InventoryManagementScreen.navigationOptions = {
@@ -27,12 +23,25 @@ OrderManagementScreen.navigationOptions = {
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'shopping-bag'} size={focused ? 18 : 14} color={tintColor} />
 };
 
-const Navigator = createBottomTabNavigator({
-    OrderManagement: OrderManagementScreen,
+const TodayNavigator = createStackNavigator({
     InventorySummary: InventorySummaryScreen,
-    InventoryManagement: InventoryManagementScreen
+    TakeOrder: OrderScreen
 },{
     initialRouteName: 'InventorySummary',
+    navigationOptions: {
+        title: 'TODAY',
+        tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />    
+    },
+    mode: 'modal',
+    headerMode: 'none',
+});
+
+const Navigator = createBottomTabNavigator({
+    OrderManagement: OrderManagementScreen,
+    Today: TodayNavigator,
+    InventoryManagement: InventoryManagementScreen
+},{
+    initialRouteName: 'Today',
     tabBarOptions: {
         activeTintColor: colors.secondary,
         inactiveTintColor: colors.inactive,

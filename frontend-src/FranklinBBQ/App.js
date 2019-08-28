@@ -30,6 +30,10 @@ const theme = {
     primary: '#68C0C0',
     secondary: '#E6740F',
     background: '#F1F0E1',
+  },
+  fonts: {
+    ...DefaultTheme.fonts,
+    regular: 'AvenirNextCondensed-Medium'
   }
 };
 

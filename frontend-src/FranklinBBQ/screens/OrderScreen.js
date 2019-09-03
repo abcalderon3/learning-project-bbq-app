@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Keyboard, StyleSheet } from 'react-native';
-import { Text, TextInput, withTheme } from 'react-native-paper';
+import { Text, TextInput, withTheme, List } from 'react-native-paper';
 
 import DismissableKeyboard from '../components/DismissableKeyboard';
 
@@ -35,6 +35,21 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
                 selectionColor={theme.colors.secondary}
                 theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}
             />
+        </View>
+    );
+};
+
+const ItemDrawer = ({ inventoryItems }) => {
+    const itemList = inventoryItems.map((itemData, index) => (
+        <List.Item 
+            title={itemData.display_name}
+            left={props => <List.Icon {...props} icon='add-circle' />}
+        />
+    ));
+
+    return (
+        <View>
+            {itemList}
         </View>
     );
 };

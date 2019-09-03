@@ -145,6 +145,17 @@ const InventoryItemEditable = ({itemName, itemQuantity, itemId, handleItemStartQ
         toggleEditing();
     }
 
+    const editStyles = {
+        editItemCard: {
+            backgroundColor: '#C8C8C8',
+            borderWidth: 1,
+            borderColor: '#E6740F',
+        },
+        editQuantity: {
+            color: '#E6740F',
+        }
+    };
+
     let inventoryItemQuantityBlock;
     if (isEditing) {
         inventoryItemQuantityBlock = 
@@ -152,16 +163,17 @@ const InventoryItemEditable = ({itemName, itemQuantity, itemId, handleItemStartQ
                 onEndEditing={handleQuantityChange} 
                 keyboardType='numeric'
                 autoFocus={true}
-                style={styles.inventoryItemQuantity}
+                style={[styles.inventoryItemQuantity, editStyles.editQuantity]}
             />
     } else {
-        inventoryItemQuantityBlock = <Text style={styles.inventoryItemQuantity}>{itemQuantity}</Text>
+        inventoryItemQuantityBlock = <Text style={[styles.inventoryItemQuantity, editStyles.editQuantity]}>{itemQuantity}</Text>
     }
+
 
     return (
         <View style={styles.inventoryItemCardContainer}>
             <TouchableRipple onPress={toggleEditing} style={{borderRadius: 10}}>
-                <Surface style={styles.inventoryItemCard}>
+                <Surface style={[styles.inventoryItemCard, editStyles.editItemCard]}>
                     <View style={styles.inventoryTextBlock}>
                         {inventoryItemQuantityBlock}
                         <Text style={styles.inventoryItemName}>{itemName}</Text>
@@ -223,6 +235,8 @@ const stylesSettings = {
     inventoryItemName: {
         textAlign: 'center',
         fontSize: 20,
+        fontFamily: 'AvenirNextCondensed-Medium',
+        paddingTop: 5,
     },
 };
 

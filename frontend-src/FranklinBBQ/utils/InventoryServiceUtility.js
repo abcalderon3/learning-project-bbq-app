@@ -1,5 +1,10 @@
+const urls = {
+    gcp: 'https://ryac-44926.appspot.com/',
+    local: 'http://127.0.0.1:5000/',
+};
+
 const config = {
-    serviceUrl: 'http://127.0.0.1:5000/',
+    serviceUrl: urls.gcp,
     enabled: false
 };
 

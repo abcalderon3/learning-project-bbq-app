@@ -11,6 +11,7 @@ const colors = {
     primary: '#68C0C0',
     secondary: '#E6740F',
     inactive: '#605f5a',
+    background: '#F1F0E1'
 };
 
 InventoryManagementScreen.navigationOptions = {
@@ -30,10 +31,13 @@ const TodayNavigator = createStackNavigator({
     initialRouteName: 'InventorySummary',
     navigationOptions: {
         title: 'TODAY',
-        tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />    
+        tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
     },
     mode: 'modal',
     headerMode: 'none',
+    cardStyle: {
+        backgroundColor: colors.background
+    }
 });
 
 const Navigator = createBottomTabNavigator({

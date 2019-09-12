@@ -7,6 +7,11 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import InventoryGrid from '../components/InventoryGrid';
 
+const setSelectedDate2 = date => ({
+    type: 'SET_SELECTED_DATE',
+    selected_date: date
+});
+
 const InventoryManagementScreen = ({ theme }) => {
     const [selectedDate, setSelectedDate] = useState(moment('2017-07-20'));
 

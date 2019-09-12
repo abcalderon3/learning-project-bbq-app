@@ -11,6 +11,7 @@ from helpers import (
     create_item_ref,
     get_item_snapshot,
     create_inventory_day,
+    create_new_order_helper,
 )
 
 app = Flask(__name__)
@@ -250,15 +251,22 @@ def create_new_order():
     order_date = req.get('date')
     party_size = req.get('party_size')
 
-    order_id = 'order -' + uuid4().hex
-    order_doc = order_ref.document(order_id)
+    # Items is a list of dicts
+    '''
+    items: [
+        {'item_id': , 'item_quantity_order':}
+    ]
 
-    order_doc.set({
-        'date': date,
-        'party_size': party_size,
-    })
+    '''
 
-    return json.dumps(order_doc.path), 201
+    items = req.get('items')
+
+    reply = create_new_order_helper(order_date, party_size, items, order_ref)
+
+    if reply.get('error'):
+        return json.dumps(reply), 400
+
+    return json.dumps(reply), 200
 
 
 #Discuss error handling

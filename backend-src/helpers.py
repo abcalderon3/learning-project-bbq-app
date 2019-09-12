@@ -130,3 +130,29 @@ def get_item_snapshot(item_name, item_ref_collection, inventory_day, error_messa
     document_reference = inventory_day.collection('items').document(item_ref_id)
 
     return document_reference
+
+def create_new_order_helper(order_date, party_size, items, ref):
+    order_id = 'order -' + uuid4().hex
+    order_doc = ref.document(order_id)
+
+    order_doc.set({
+        'date': order_date,
+        'party_size': party_size,
+    })
+
+    item_collection = order_doc.collection('items')
+
+    for item in items:
+        item_id = item.get('item_id')
+        item_quantity_order = item.get('item_quantity_order')
+
+        item_doc = item_collection.document(item_id)
+
+        item_doc.set({
+            'item_quantity_order': item_quantity_order
+        })
+
+    if not order_doc.id:
+        return {'error': 'could not create new order'}
+
+    return {'order_id': order_doc.id}

@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import moment from 'moment';
-import { FAB, withTheme } from 'react-native-paper';
+import { connect } from 'react-redux';
+import { FAB, withTheme, Text } from 'react-native-paper';
 
+import { getInventoryItems } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
 
-const InventorySummaryScreen = ({ navigation, theme }) => {
-    const [selectedDate, setSelectedDate] = useState(moment('2017-07-20'));
-
-    const handleDateChange = newDate => setSelectedDate(newDate);
-
-    const selectedDateString = moment(selectedDate).format('YYYY-MM-DD');
+const InventorySummaryScreen = ({ todayDate, inventoryItems, getInventoryItems, navigation, theme }) => {
+    useEffect(() => {
+        getInventoryItems('daily_inventories/' + todayDate);
+    });
 
     return (
         <View style={styles.screenContainer}>
@@ -21,7 +20,8 @@ const InventorySummaryScreen = ({ navigation, theme }) => {
                 color={theme.colors.background}
                 style={[styles.fab, {backgroundColor: theme.colors.secondary}]}
             />
-            <InventoryGrid inventoryDateString={selectedDateString} editMode={false} />
+            <Text>{JSON.stringify(inventoryItems)}</Text>
+            <InventoryGrid inventoryDateString={todayDate} editMode={false} />
         </View>
     );
 };
@@ -37,4 +37,17 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withTheme(InventorySummaryScreen);
+const mapStateToProps = state => {
+    return {
+        todayDate: state.todayDate,
+        inventoryItems: state.inventory.items
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getInventoryItems: (inventoryDayDocPath) => dispatch(getInventoryItems(inventoryDayDocPath))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventorySummaryScreen));

@@ -1,43 +1,36 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { connect } from 'react-redux';
 
+import { setSelectedDate } from '../redux/actions'
 import InventoryGrid from '../components/InventoryGrid';
 
-const setSelectedDate2 = date => ({
-    type: 'SET_SELECTED_DATE',
-    selected_date: date
-});
-
-const InventoryManagementScreen = ({ theme }) => {
-    const [selectedDate, setSelectedDate] = useState(moment('2017-07-20'));
-
-    const handleDateChange = newDate => setSelectedDate(newDate);
-
-    const selectedDateString = moment(selectedDate).format('YYYY-MM-DD');
-
+const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, theme }) => {
     return (
         <View style={styles.screenContainer}>
-            <DateButton date={selectedDate} dateChange={handleDateChange} theme={theme} />
-            <InventoryGrid inventoryDateString={selectedDateString} editMode={true} />
+            <DateButton date={selectedDate} dateChange={onSelectedDateChange} theme={theme} />
+            <InventoryGrid inventoryDateString={selectedDate} editMode={true} />
         </View>
     );
 };
 
 const DateButton = ({date, dateChange, theme}) => {
+    const displayFormat = 'MMM. D, YYYY';
+    const dataFormat = 'YYYY-MM-DD';
     return (
         <DatePicker
             style={styles.datePicker}
-            date={date}
+            date={moment(date).format(displayFormat)}
             mode="date"
             placeholder="Select Date..."
-            format="MMM. D, YYYY"
+            format={displayFormat}
             confirmBtnText="Done"
             cancelBtnText="Cancel"
-            onDateChange={dateChange}
+            onDateChange={formattedDateString => dateChange(moment(formattedDateString, displayFormat).format(dataFormat))}
             iconComponent={
                 <FontAwesome5 
                     name='calendar-alt' 
@@ -56,6 +49,18 @@ const DateButton = ({date, dateChange, theme}) => {
     );
 };
 
+const mapStateToProps = state => {
+    return {
+        selectedDate: state.selectedDate
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onSelectedDateChange: (date) => dispatch(setSelectedDate(date))
+    };
+};
+
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
@@ -67,4 +72,6 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withTheme(InventoryManagementScreen);
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventoryManagementScreen));

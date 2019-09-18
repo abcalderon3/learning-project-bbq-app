@@ -4,21 +4,29 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider as StoreProvider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 import { createAppContainer } from 'react-navigation';
 
+import rootReducer from './redux/reducers';
 import Header from './components/Header';
 import Navigator from './components/Navigator';
 
 const AppContainer = createAppContainer(Navigator);
 
+const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
+
 const App = () => {
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.safeContainer}>
-        <Header />
-        <AppContainer />
-      </View>
-    </PaperProvider>
+    <StoreProvider store={store}>
+      <PaperProvider theme={theme}>
+        <View style={styles.safeContainer}>
+          <Header />
+          <AppContainer />
+        </View>
+      </PaperProvider>
+    </StoreProvider>
   );
 };
 

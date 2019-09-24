@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { FAB, withTheme, Text } from 'react-native-paper';
+import { useFirestoreConnect } from 'react-redux-firebase';
+import { FAB, withTheme } from 'react-native-paper';
 
 import { getInventoryItems } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
+import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventorySummaryScreen = ({ todayDate, inventoryItems, getInventoryItems, navigation, theme }) => {
-    useEffect(() => {
-        getInventoryItems('daily_inventories/' + todayDate);
-    });
+const InventorySummaryScreen = ({ todayDate, inventoryItems, navigation, theme }) => {
+    useFirestoreConnect(['daily_inventories/' + todayDate + '/items', 'item_ref']);
 
     return (
         <View style={styles.screenContainer}>
@@ -20,8 +20,7 @@ const InventorySummaryScreen = ({ todayDate, inventoryItems, getInventoryItems, 
                 color={theme.colors.background}
                 style={[styles.fab, {backgroundColor: theme.colors.secondary}]}
             />
-            <Text>{JSON.stringify(inventoryItems)}</Text>
-            <InventoryGrid inventoryDateString={todayDate} editMode={false} />
+            <InventoryGrid inventoryItems={inventoryItems} inventoryDateString={todayDate} editMode={false} />
         </View>
     );
 };
@@ -37,10 +36,15 @@ const styles = StyleSheet.create({
     }
 });
 
-const mapStateToProps = state => {
+
+
+const mapStateToProps = (state) => {
     return {
         todayDate: state.todayDate,
-        inventoryItems: state.inventory.items
+        inventoryItems: (state.firestore.data.daily_inventories && state.firestore.data.item_ref) && joinInventoryItemsRef(
+            state.firestore.data.daily_inventories[state.todayDate].items,
+            state.firestore.data.item_ref
+        ),
     };
 };
 
@@ -50,4 +54,6 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventorySummaryScreen));
+const reduxConnect = connect(mapStateToProps, mapDispatchToProps);
+
+export default reduxConnect(withTheme(InventorySummaryScreen));

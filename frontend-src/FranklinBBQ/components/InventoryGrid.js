@@ -24,8 +24,7 @@ const sampleInventoryItems = [
 ];
 
 // Displays inventory items based on fetched data
-const InventoryGrid = ({ inventoryDateString, editMode }) => {
-    const [inventoryItems, setInventoryItems] = useState(sampleInventoryItems);
+const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateString, editMode }) => {
     const [isLoading, setLoading] = useState(false);
 
     const InventoryService = new InventoryServiceUtility();
@@ -38,10 +37,6 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
             // Request for backend to create or provide the selected day's inventory day document path
             let inventoryDayDocPath = await InventoryService.getInventoryDay(inventoryDateString);
 
-            // Get Inventory Day document data from Firestore
-            let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
-
-            setInventoryItems(inventoryItems);
             setLoading(false);
         };
         fetchInventoryData();
@@ -49,11 +44,7 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
 
     const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
         let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity);
-        if (updateSuccessful) {
-            let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
-
-            setInventoryItems(newInventoryItems);
-        } else {
+        if (!updateSuccessful) {
             Alert.alert('Whoops!', 'Failed to update the item.')
         }
     };
@@ -189,7 +180,7 @@ InventoryItem.defaultProps = {
     itemName: 'Item Name',
     itemQuantity: '##.#',
     itemPercRemaining: 0,
-}
+};
 
 const stylesSettings = {
     inventoryScrollView: {

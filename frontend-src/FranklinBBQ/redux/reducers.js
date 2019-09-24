@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { firebaseReducer } from 'react-redux-firebase';
+import { firestoreReducer } from 'redux-firestore';
 import moment from 'moment';
 
 // In production, set this to a now moment
@@ -37,6 +39,8 @@ const inventory = (state = {
 };
 
 const rootReducer = combineReducers({
+    firebase: firebaseReducer,
+    firestore: firestoreReducer,
     todayDate,
     selectedDate,
     inventory

@@ -19,7 +19,9 @@
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^3.11.1",
     "react-redux": "^7.1.1",
+    "react-redux-firebase": "^3.0.0-beta.2",
     "redux": "^4.0.4",
+    "redux-firestore": "^0.9.0",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {

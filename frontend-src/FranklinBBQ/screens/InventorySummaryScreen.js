@@ -39,12 +39,19 @@ const styles = StyleSheet.create({
 
 
 const mapStateToProps = (state) => {
+    let inventoryItems;
+    if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
+        if (state.firestore.data.daily_inventories[state.todayDate]) {
+            inventoryItems = joinInventoryItemsRef(
+                state.firestore.data.daily_inventories[state.todayDate].items,
+                state.firestore.data.item_ref
+            );
+        }
+    }
+
     return {
         todayDate: state.todayDate,
-        inventoryItems: (state.firestore.data.daily_inventories && state.firestore.data.item_ref) && joinInventoryItemsRef(
-            state.firestore.data.daily_inventories[state.todayDate].items,
-            state.firestore.data.item_ref
-        ),
+        inventoryItems,
     };
 };
 
@@ -54,6 +61,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-const reduxConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default reduxConnect(withTheme(InventorySummaryScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventorySummaryScreen));

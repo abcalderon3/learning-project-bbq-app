@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
-import { setSelectedDate } from '../redux/actions'
+import { setSelectedDate } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
+import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, theme }) => {
+const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryItems, theme }) => {
+    useFirestoreConnect(['daily_inventories/' + selectedDate + '/items', 'item_ref']);
+
     return (
         <View style={styles.screenContainer}>
             <DateButton date={selectedDate} dateChange={onSelectedDateChange} theme={theme} />
-            <InventoryGrid inventoryDateString={selectedDate} editMode={true} />
+            <InventoryGrid inventoryDateString={selectedDate} inventoryItems={inventoryItems} editMode={true} />
         </View>
     );
 };
@@ -50,8 +54,19 @@ const DateButton = ({date, dateChange, theme}) => {
 };
 
 const mapStateToProps = state => {
+    let inventoryItems;
+    if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
+        if (state.firestore.data.daily_inventories[state.selectedDate]) {
+            inventoryItems = joinInventoryItemsRef(
+                state.firestore.data.daily_inventories[state.selectedDate].items,
+                state.firestore.data.item_ref
+            );
+        }
+    }
+
     return {
-        selectedDate: state.selectedDate
+        selectedDate: state.selectedDate,
+        inventoryItems,
     };
 };
 
@@ -71,7 +86,5 @@ const styles = StyleSheet.create({
         paddingTop: 30,
     }
 });
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventoryManagementScreen));

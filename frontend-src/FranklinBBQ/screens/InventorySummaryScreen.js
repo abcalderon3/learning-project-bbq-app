@@ -4,12 +4,15 @@ import { connect } from 'react-redux';
 import { useFirestoreConnect } from 'react-redux-firebase';
 import { FAB, withTheme } from 'react-native-paper';
 
-import { getInventoryItems } from '../redux/actions';
+import { getInventoryDay } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventorySummaryScreen = ({ todayDate, inventoryItems, navigation, theme }) => {
-    useFirestoreConnect(['daily_inventories/' + todayDate + '/items', 'item_ref']);
+const InventorySummaryScreen = ({ todayDate, inventoryDayPath, getInventoryDay, inventoryItems, navigation, theme }) => {
+    useEffect(() => {
+        getInventoryDay(todayDate);
+    }, [todayDate]);
+    useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>
@@ -51,13 +54,14 @@ const mapStateToProps = (state) => {
 
     return {
         todayDate: state.todayDate,
+        inventoryDayPath: state.inventoryDayPaths[state.todayDate],
         inventoryItems,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getInventoryItems: (inventoryDayDocPath) => dispatch(getInventoryItems(inventoryDayDocPath))
+        getInventoryDay: inventoryDate => dispatch(getInventoryDay(inventoryDate)),
     };
 };
 

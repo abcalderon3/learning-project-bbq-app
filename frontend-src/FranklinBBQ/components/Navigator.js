@@ -3,7 +3,7 @@ import { createBottomTabNavigator, createStackNavigator } from 'react-navigation
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import InventorySummaryScreen from '../screens/InventorySummaryScreen';
-import InventoryManagementScreen from '../screens/InventoryManagementScreen';
+import InventoryManagementContainer from '../containers/InventoryManagementContainer';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
 import OrderScreen from '../screens/OrderScreen';
 
@@ -14,7 +14,7 @@ const colors = {
     background: '#F1F0E1'
 };
 
-InventoryManagementScreen.navigationOptions = {
+InventoryManagementContainer.navigationOptions = {
     title: 'INVENTORY',
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'edit'} size={focused ? 18 : 14} color={tintColor} />
 };
@@ -43,7 +43,7 @@ const TodayNavigator = createStackNavigator({
 const Navigator = createBottomTabNavigator({
     OrderManagement: OrderManagementScreen,
     Today: TodayNavigator,
-    InventoryManagement: InventoryManagementScreen
+    InventoryManagement: InventoryManagementContainer
 },{
     initialRouteName: 'Today',
     tabBarOptions: {

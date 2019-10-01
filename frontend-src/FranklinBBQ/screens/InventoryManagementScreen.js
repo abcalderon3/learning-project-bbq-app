@@ -7,12 +7,11 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
 import { useFirestoreConnect } from 'react-redux-firebase';
 
-import { setSelectedDate } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryItems, theme }) => {
-    useFirestoreConnect(['daily_inventories/' + selectedDate + '/items', 'item_ref']);
+const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme }) => {
+    useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>
@@ -53,26 +52,19 @@ const DateButton = ({date, dateChange, theme}) => {
     );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, { selectedDate }) => {
     let inventoryItems;
     if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
-        if (state.firestore.data.daily_inventories[state.selectedDate]) {
+        if (state.firestore.data.daily_inventories[selectedDate]) {
             inventoryItems = joinInventoryItemsRef(
-                state.firestore.data.daily_inventories[state.selectedDate].items,
+                state.firestore.data.daily_inventories[selectedDate].items,
                 state.firestore.data.item_ref
             );
         }
     }
 
     return {
-        selectedDate: state.selectedDate,
         inventoryItems,
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onSelectedDateChange: (date) => dispatch(setSelectedDate(date))
     };
 };
 
@@ -87,4 +79,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventoryManagementScreen));
+export default connect(mapStateToProps)(withTheme(InventoryManagementScreen));

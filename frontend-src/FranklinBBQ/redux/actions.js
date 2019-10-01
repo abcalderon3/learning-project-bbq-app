@@ -1,54 +1,43 @@
-import firebase from 'react-native-firebase';
+import { inventoryServiceConfig } from '../config';
 
 export const setSelectedDate = date => ({
     type: 'SET_SELECTED_DATE',
     selectedDate: date
 });
 
-export const requestInventoryItems = inventoryDayDocPath => ({
-    type: 'REQUEST_INVENTORY_ITEMS',
-    inventoryDayDocPath
+export const requestInventoryDay = inventoryDate => ({
+    type: 'REQUEST_INVENTORY_DAY',
+    inventoryDate
 });
 
-export const receiveInventoryItems = inventoryItems => ({
-    type: 'RECEIVE_INVENTORY_ITEMS',
-    inventoryItems
+export const receiveInventoryDay = (inventoryDate, inventoryDayPath) => ({
+    type: 'RECEIVE_INVENTORY_DAY',
+    inventoryDate,
+    inventoryDayPath,
 });
 
-export const getInventoryItems = inventoryDayDocPath => {
-    return async (dispatch) => {
-        dispatch(requestInventoryItems(inventoryDayDocPath));
 
-        // Not elegant!
-        // TODO: Either pull this out as a separate function that intelligently signs in and initializes when needed or use a middleware?
-        firebase.auth().signInAnonymously();
-        const firestore = firebase.firestore();
+export const getInventoryDay = inventoryDate => {
+    return dispatch => {
+        dispatch(requestInventoryDay(inventoryDate));
 
-        const inventoryDayDocRef = firestore.doc(inventoryDayDocPath);
+        if (inventoryServiceConfig.enabled) {
+            return fetch(
+                inventoryServiceConfig.serviceUrl + 'create_day',
+                {
+                    method: 'POST',
+                    headers: inventoryServiceConfig.commonHeaders,
+                    body: JSON.stringify({
+                        date: inventoryDate
+                    })
+                }
+            )
+                .then(response => response.json())
+                .then(inventoryDayPath => dispatch(receiveInventoryDay(inventoryDate, inventoryDayPath)));
 
-        // Gets the full set of docs in the inventory day document's items collection
-        const inventoryDayItemsDocs = await inventoryDayDocRef.collection('items').get().then((querySnapshot) => { return querySnapshot.docs; } );
-        
-        // Gets the item reference docs
-        const itemsRefDocs = await firestore.collection('item_ref').get().then((querySnapshot) => { return querySnapshot.docs; } );
-
-        // Joins the inventory day items with item reference info
-        let inventoryItems = inventoryDayItemsDocs.map(
-            itemDayDoc => ({
-                item_id: itemDayDoc.id,
-                ...itemsRefDocs.find((itemRefDoc) => (itemRefDoc.id === itemDayDoc.id) && itemRefDoc).data(),
-                ...itemDayDoc.data(),
-            })
-        );
-
-        // Calculate data to be displayed
-        inventoryItems = inventoryItems.map( item => ({
-            ...item,
-            current_item_quantity: item.start_item_quantity - item.item_quantity_change,
-            current_perc_remaining: ((item.start_item_quantity - item.item_quantity_change)/item.start_item_quantity || 0)
-        }));
-
-        dispatch(receiveInventoryItems(inventoryItems));
+        } else {
+            return dispatch(receiveInventoryDay(inventoryDate, 'daily_inventories/' + inventoryDate));
+        }
 
     };
 };

@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux';
 import { firebaseReducer } from 'react-redux-firebase';
 import { firestoreReducer } from 'redux-firestore';
-import moment from 'moment';
 
-// In production, set this to a now moment
-const today = '2017-07-20';
+import { today } from '../config';
 
 const todayDate = (state = today, action) => state;
 
@@ -17,21 +15,14 @@ const selectedDate = (state = today, action) => {
     }
 };
 
-const inventory = (state = {
-    isFetching: false,
-    items: []
-}, action) => {
+const inventoryDayPaths = (state = {}, action) => {
     switch (action.type) {
-        case 'REQUEST_INVENTORY_ITEMS':
+        case 'REQUEST_INVENTORY_DAY':
+            return state;
+        case 'RECEIVE_INVENTORY_DAY':
             return {
                 ...state,
-                isFetching: true
-            };
-        case 'RECEIVE_INVENTORY_ITEMS':
-            return {
-                ...state,
-                isFetching: false,
-                items: action.inventoryItems
+                [action.inventoryDate]: action.inventoryDayPath
             };
         default:
             return state;
@@ -43,7 +34,7 @@ const rootReducer = combineReducers({
     firestore: firestoreReducer,
     todayDate,
     selectedDate,
-    inventory
+    inventoryDayPaths,
 });
 
 export default rootReducer;

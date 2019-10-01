@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
-import FirestoreDataUtility from '../utils/FirestoreDataUtility';
 import InventoryServiceUtility from '../utils/InventoryServiceUtility';
 
 const sampleInventoryItems = [
@@ -25,22 +24,7 @@ const sampleInventoryItems = [
 
 // Displays inventory items based on fetched data
 const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateString, editMode }) => {
-    const [isLoading, setLoading] = useState(false);
-
     const InventoryService = new InventoryServiceUtility();
-    const FirestoreData = new FirestoreDataUtility();
-
-    useEffect(() => {
-        const fetchInventoryData = async () => {
-            setLoading(true);
-
-            // Request for backend to create or provide the selected day's inventory day document path
-            let inventoryDayDocPath = await InventoryService.getInventoryDay(inventoryDateString);
-
-            setLoading(false);
-        };
-        fetchInventoryData();
-    }, [inventoryDateString]);
 
     const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
         let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity);

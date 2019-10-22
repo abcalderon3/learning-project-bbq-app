@@ -5,11 +5,15 @@ const urls = {
 
 export const inventoryServiceConfig = {
     serviceUrl: urls.gcp,
-    enabled: true,
+    enabled: false,
     commonHeaders: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
     },
+    responseCodes: {
+        success: 201,
+        error: 400
+    }
 };
 
 export const today = '2017-07-20';

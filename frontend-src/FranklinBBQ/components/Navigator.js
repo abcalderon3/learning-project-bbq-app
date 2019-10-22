@@ -5,7 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementContainer from '../containers/InventoryManagementContainer';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
-import OrderScreen from '../screens/OrderScreen';
+import OrderContainer from '../containers/OrderContainer';
 
 const colors = {
     primary: '#68C0C0',
@@ -26,7 +26,7 @@ OrderManagementScreen.navigationOptions = {
 
 const TodayNavigator = createStackNavigator({
     InventorySummary: InventorySummaryScreen,
-    TakeOrder: OrderScreen
+    TakeOrder: OrderContainer
 },{
     initialRouteName: 'InventorySummary',
     navigationOptions: {

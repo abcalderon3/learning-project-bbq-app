@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { useFirestoreConnect } from 'react-redux-firebase';
 import { FAB, withTheme } from 'react-native-paper';
 
-import { getInventoryDay } from '../redux/actions';
+import { getInventoryDay, createNewOrder } from '../redux/actions';
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventorySummaryScreen = ({ todayDate, inventoryDayPath, getInventoryDay, inventoryItems, navigation, theme }) => {
+const InventorySummaryScreen = ({ todayDate, inventoryDayPath, getInventoryDay, createNewOrder, inventoryItems, navigation, theme }) => {
     useEffect(() => {
         getInventoryDay(todayDate);
     }, [todayDate]);
@@ -19,7 +19,10 @@ const InventorySummaryScreen = ({ todayDate, inventoryDayPath, getInventoryDay, 
             <FAB 
                 label='New Order' 
                 icon='add' 
-                onPress={() => navigation.navigate('TakeOrder')}
+                onPress={() => {
+                    createNewOrder(todayDate);
+                    navigation.navigate('TakeOrder');
+                }}
                 color={theme.colors.background}
                 style={[styles.fab, {backgroundColor: theme.colors.secondary}]}
             />
@@ -39,8 +42,6 @@ const styles = StyleSheet.create({
     }
 });
 
-
-
 const mapStateToProps = (state) => {
     let inventoryItems;
     if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
@@ -59,10 +60,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        getInventoryDay: inventoryDate => dispatch(getInventoryDay(inventoryDate)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(InventorySummaryScreen));
+export default connect(mapStateToProps, { getInventoryDay, createNewOrder })(withTheme(InventorySummaryScreen));

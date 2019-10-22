@@ -10,6 +10,7 @@ import firebase from 'react-native-firebase';
 import { ReactReduxFirebaseProvider, ReduxFirestoreProvider } from 'react-redux-firebase';
 import { createFirestoreInstance } from 'redux-firestore';
 import thunkMiddleware from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { createAppContainer } from 'react-navigation';
 
 import rootReducer from './redux/reducers';
@@ -18,7 +19,7 @@ import Navigator from './components/Navigator';
 
 const AppContainer = createAppContainer(Navigator);
 
-const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunkMiddleware)));
 
 firebase.auth().signInAnonymously();
 firebase.firestore();

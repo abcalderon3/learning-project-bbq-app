@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Keyboard, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { Text, TextInput, withTheme, List, Button } from 'react-native-paper';
+import { View, Keyboard, StyleSheet, KeyboardAvoidingView, TextInput } from 'react-native';
+import { Text, withTheme, List, Button, TextInput as TextInputPaper } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import DismissableKeyboard from '../components/DismissableKeyboard';
+import * as OrderStyles from '../styles/OrderStyles';
+import { dynamicQtyBackgroundColor } from '../styles/dynamicQuantityColor';
+import { colors } from '../styles/colors';
 
 const OrderScreen = ({ 
     inventoryItems, 
@@ -13,6 +16,7 @@ const OrderScreen = ({
     addItemToOrder,
     editItemOrdered,
     submitNewOrder,
+    navigation,
 }) => {
     // Calculate which items are available vs. in the order and provide all display data
     const [availableItems, setAvailableItems] = useState([]);
@@ -57,7 +61,16 @@ const OrderScreen = ({
                 <OrderDrawer newOrderItems={newOrderItems} />
                 <SelectedDrawer selectedItems={selectedItems} onSelectionCompletion={addItemToOrder} onUnselectItem={onUnselectItem} />
                 <AvailableDrawer availableItems={availableItems} onSelectItem={onSelectItem} />
-                <Button mode='contained' onPress={() => submitNewOrder()}><Text>Save</Text></Button>
+                <Button 
+                    mode='contained' 
+                    onPress={() => {
+                        submitNewOrder();
+                        navigation.navigate('InventorySummary');
+                    }} 
+                    style={OrderStyles.button.container}
+                >
+                    <Text style={OrderStyles.button.label}>SAVE</Text>
+                </Button>
             </View>
         </DismissableKeyboard>
     );
@@ -69,16 +82,16 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
     };
 
     return (
-        <View style={partySizeInputStyles.container}>
-            <Text style={partySizeInputStyles.label}>Party Size</Text>
-            <TextInput
+        <View style={OrderStyles.partySizeInputStyles.container}>
+            <Text style={OrderStyles.partySizeInputStyles.label}>Party Size</Text>
+            <TextInputPaper
                 onEndEditing={handlePartySizeInput}
                 onBlur={() => Keyboard.dismiss()}
                 mode='outlined'
                 keyboardType='numeric'
                 clearTextOnFocus={true}
                 autoFocus={true}
-                style={partySizeInputStyles.textInput}
+                style={OrderStyles.partySizeInputStyles.textInput}
                 selectionColor={theme.colors.secondary}
                 theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}
             />
@@ -97,6 +110,7 @@ const itemListMapping = ({itemList, status, displayQuantityKey, onSelectItem, on
             selectItem={onSelectItem ? onSelectItem : undefined}
             addItemToOrder={onSelectionCompletion}
             unselectItem={onUnselectItem}
+            currentPercRemaining={item.current_perc_remaining}
         />
     ));
 };
@@ -109,7 +123,7 @@ const OrderDrawer = ({ newOrderItems }) => {
     };
 
     return (
-        <View>{itemListMapping(args)}</View>
+        <View style={newOrderItems.length > 0 ? OrderStyles.OrderDrawer.view : undefined}>{itemListMapping(args)}</View>
     );
 };
 
@@ -144,6 +158,7 @@ const ListItem = withTheme(({
     itemId, 
     itemDisplayName, 
     displayQuantity, 
+    currentPercRemaining,
     selectItem, 
     addItemToOrder, 
     unselectItem,
@@ -156,15 +171,23 @@ const ListItem = withTheme(({
     };
 
     let listItemPropValues = {
-        rightNode: <Text>{displayQuantity}</Text>,
+        rightNode: <Text style={OrderStyles.listItemStyles.displayQuantity}>{displayQuantity}</Text>,
+        style: [OrderStyles.listItemStyles.listItem],
+        leftIconColor: colors.inactive,
     };
     switch (status) {
         case 'available':
             listItemPropValues.leftIcon = 'plus-circle';
             listItemPropValues.onPress = () => selectItem(itemId);
+            listItemPropValues.rightNode = 
+                <View style={[OrderStyles.listItemStyles.displayQuantityContainer, dynamicQtyBackgroundColor(currentPercRemaining)]}>
+                    {listItemPropValues.rightNode}
+                </View>;
             break;
         case 'selected':
+            listItemPropValues.style.push(OrderStyles.listItemStyles.listItemSelected);
             listItemPropValues.leftIcon = 'arrow-alt-circle-up';
+            listItemPropValues.leftIconColor = colors.secondary;
             listItemPropValues.rightNode = 
                 <TextInput
                     onEndEditing={completeItemSelection}
@@ -172,40 +195,29 @@ const ListItem = withTheme(({
                     keyboardType='numeric'
                     autoFocus={true}
                     selectionColor={theme.colors.secondary}
-                    theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}
+                    style={OrderStyles.listItemStyles.quantityInput}
                 />;
             break;
         case 'in_order':
+            listItemPropValues.style.push(OrderStyles.listItemStyles.listItemOrdered);
             listItemPropValues.leftIcon = 'check-circle';
+            listItemPropValues.leftIconColor = colors.primary;
+            listItemPropValues.rightNode = 
+                <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
+                    {listItemPropValues.rightNode}
+                </View>;
             break;
     }
 
     return (
         <List.Item 
             title={itemDisplayName}
-            left={props => <List.Icon {...props} icon={props => <FontAwesome5 name={listItemPropValues.leftIcon} {...props} />} />}
+            left={props => <List.Icon {...props} color={listItemPropValues.leftIconColor} icon={props => <FontAwesome5 name={listItemPropValues.leftIcon} {...props} />} />}
             right={props => listItemPropValues.rightNode}
             onPress={listItemPropValues.onPress}
+            style={listItemPropValues.style}
         />
     );
-});
-
-const partySizeInputStyles = StyleSheet.create({
-    container: {
-        flexDirection:'row', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 30,
-        paddingVertical: 10,
-    },
-    label: {
-        flex: 3,
-        fontSize: 20, 
-        textAlign: 'center',
-    },
-    textInput: {
-        flex: 1,
-    },
 });
 
 export default withTheme(OrderScreen);

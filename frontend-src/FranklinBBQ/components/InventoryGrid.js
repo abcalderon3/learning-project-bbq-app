@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } 
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
 import InventoryServiceUtility from '../utils/InventoryServiceUtility';
+import { remainingColor } from '../styles/dynamicQuantityColor';
 
 const sampleInventoryItems = [
     {
@@ -67,26 +68,16 @@ const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateStr
 
 class InventoryItem extends React.Component {
     render() {
-        let remainingColor = '#C8C8C8';
-        let itemCardOpacity = 1;
-        if(this.props.itemPercRemaining >= 0.75) {
-            remainingColor = '#8CE53D'; // Green
-        } else if (this.props.itemPercRemaining >= 0.25) {
-            remainingColor = '#F2D557'; // Yellow
-        } else if (this.props.itemPercRemaining > 0) {
-            remainingColor = '#F27C57'; // Red
-        } else {
-            itemCardOpacity = 0.5;
-        }
+        let itemCardOpacity = this.props.itemPercRemaining ? 1 : 0.5;
 
         let dynamicStyles = {
             quantityVisualBack: {
                 flex: (1 - this.props.itemPercRemaining),
-                backgroundColor: '#C8C8C8',
+                backgroundColor: remainingColor(0),
             },
             quantityVisualColor: {
                 flex: this.props.itemPercRemaining,
-                backgroundColor: remainingColor,
+                backgroundColor: remainingColor(this.props.itemPercRemaining),
             },
             inventoryItemCardDynamic: {
                 opacity: itemCardOpacity,

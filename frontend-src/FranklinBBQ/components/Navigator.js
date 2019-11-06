@@ -6,13 +6,8 @@ import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementContainer from '../containers/InventoryManagementContainer';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
 import OrderContainer from '../containers/OrderContainer';
-
-const colors = {
-    primary: '#68C0C0',
-    secondary: '#E6740F',
-    inactive: '#605f5a',
-    background: '#F1F0E1'
-};
+import { colors } from '../styles/colors';
+import { fonts } from '../styles/fonts';
 
 InventoryManagementContainer.navigationOptions = {
     title: 'INVENTORY',
@@ -53,7 +48,7 @@ const Navigator = createBottomTabNavigator({
             backgroundColor: colors.primary,
         },
         labelStyle: {
-            fontFamily: 'AvenirNextCondensed-Bold',
+            fontFamily: fonts.buttons,
             fontSize: 16
         },
     }

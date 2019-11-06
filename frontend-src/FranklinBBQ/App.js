@@ -16,6 +16,8 @@ import { createAppContainer } from 'react-navigation';
 import rootReducer from './redux/reducers';
 import Header from './components/Header';
 import Navigator from './components/Navigator';
+import { colors } from './styles/colors';
+import { fonts } from './styles/fonts';
 
 const AppContainer = createAppContainer(Navigator);
 
@@ -54,13 +56,13 @@ const theme = {
   roundness: 10,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#68C0C0',
-    secondary: '#E6740F',
-    background: '#F1F0E1',
+    primary: colors.primary,
+    secondary: colors.secondary,
+    background: colors.background,
   },
   fonts: {
     ...DefaultTheme.fonts,
-    regular: 'AvenirNextCondensed-Medium'
+    regular: fonts.regular,
   }
 };
 

@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     },
     fab: {
         marginTop: 30,
-        fontFamily: 'AvenirNextCondensed-Bold'
     }
 });
 

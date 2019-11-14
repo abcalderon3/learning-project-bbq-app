@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
-import FirestoreDataUtility from '../utils/FirestoreDataUtility';
 import InventoryServiceUtility from '../utils/InventoryServiceUtility';
+import { remainingColor } from '../styles/dynamicQuantityColor';
 
 const sampleInventoryItems = [
     {
@@ -24,36 +24,12 @@ const sampleInventoryItems = [
 ];
 
 // Displays inventory items based on fetched data
-const InventoryGrid = ({ inventoryDateString, editMode }) => {
-    const [inventoryItems, setInventoryItems] = useState(sampleInventoryItems);
-    const [isLoading, setLoading] = useState(false);
-
+const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateString, editMode }) => {
     const InventoryService = new InventoryServiceUtility();
-    const FirestoreData = new FirestoreDataUtility();
-
-    useEffect(() => {
-        const fetchInventoryData = async () => {
-            setLoading(true);
-
-            // Request for backend to create or provide the selected day's inventory day document path
-            let inventoryDayDocPath = await InventoryService.getInventoryDay(inventoryDateString);
-
-            // Get Inventory Day document data from Firestore
-            let inventoryItems = await FirestoreData.getInventoryItems(inventoryDayDocPath);
-
-            setInventoryItems(inventoryItems);
-            setLoading(false);
-        };
-        fetchInventoryData();
-    }, [inventoryDateString]);
 
     const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
         let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity);
-        if (updateSuccessful) {
-            let newInventoryItems = inventoryItems.map(item => item.item_id === itemId ? { ...item, start_item_quantity: newItemStartQuantity } : item);
-
-            setInventoryItems(newInventoryItems);
-        } else {
+        if (!updateSuccessful) {
             Alert.alert('Whoops!', 'Failed to update the item.')
         }
     };
@@ -92,26 +68,16 @@ const InventoryGrid = ({ inventoryDateString, editMode }) => {
 
 class InventoryItem extends React.Component {
     render() {
-        let remainingColor = '#C8C8C8';
-        let itemCardOpacity = 1;
-        if(this.props.itemPercRemaining >= 0.75) {
-            remainingColor = '#8CE53D'; // Green
-        } else if (this.props.itemPercRemaining >= 0.25) {
-            remainingColor = '#F2D557'; // Yellow
-        } else if (this.props.itemPercRemaining > 0) {
-            remainingColor = '#F27C57'; // Red
-        } else {
-            itemCardOpacity = 0.5;
-        }
+        let itemCardOpacity = this.props.itemPercRemaining ? 1 : 0.5;
 
         let dynamicStyles = {
             quantityVisualBack: {
                 flex: (1 - this.props.itemPercRemaining),
-                backgroundColor: '#C8C8C8',
+                backgroundColor: remainingColor(0),
             },
             quantityVisualColor: {
                 flex: this.props.itemPercRemaining,
-                backgroundColor: remainingColor,
+                backgroundColor: remainingColor(this.props.itemPercRemaining),
             },
             inventoryItemCardDynamic: {
                 opacity: itemCardOpacity,
@@ -189,7 +155,7 @@ InventoryItem.defaultProps = {
     itemName: 'Item Name',
     itemQuantity: '##.#',
     itemPercRemaining: 0,
-}
+};
 
 const stylesSettings = {
     inventoryScrollView: {

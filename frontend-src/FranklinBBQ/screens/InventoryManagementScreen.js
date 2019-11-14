@@ -1,38 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { connect } from 'react-redux';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
 import InventoryGrid from '../components/InventoryGrid';
+import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventoryManagementScreen = ({ theme }) => {
-    const [selectedDate, setSelectedDate] = useState(moment('2017-07-20'));
-
-    const handleDateChange = newDate => setSelectedDate(newDate);
-
-    const selectedDateString = moment(selectedDate).format('YYYY-MM-DD');
+const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme }) => {
+    useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>
-            <DateButton date={selectedDate} dateChange={handleDateChange} theme={theme} />
-            <InventoryGrid inventoryDateString={selectedDateString} editMode={true} />
+            <DateButton date={selectedDate} dateChange={onSelectedDateChange} theme={theme} />
+            <InventoryGrid inventoryDateString={selectedDate} inventoryItems={inventoryItems} editMode={true} />
         </View>
     );
 };
 
 const DateButton = ({date, dateChange, theme}) => {
+    const displayFormat = 'MMM. D, YYYY';
+    const dataFormat = 'YYYY-MM-DD';
     return (
         <DatePicker
             style={styles.datePicker}
-            date={date}
+            date={moment(date).format(displayFormat)}
             mode="date"
             placeholder="Select Date..."
-            format="MMM. D, YYYY"
+            format={displayFormat}
             confirmBtnText="Done"
             cancelBtnText="Cancel"
-            onDateChange={dateChange}
+            onDateChange={formattedDateString => dateChange(moment(formattedDateString, displayFormat).format(dataFormat))}
             iconComponent={
                 <FontAwesome5 
                     name='calendar-alt' 
@@ -51,6 +52,22 @@ const DateButton = ({date, dateChange, theme}) => {
     );
 };
 
+const mapStateToProps = (state, { selectedDate }) => {
+    let inventoryItems;
+    if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
+        if (state.firestore.data.daily_inventories[selectedDate]) {
+            inventoryItems = joinInventoryItemsRef(
+                state.firestore.data.daily_inventories[selectedDate].items,
+                state.firestore.data.item_ref
+            );
+        }
+    }
+
+    return {
+        inventoryItems,
+    };
+};
+
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
@@ -62,4 +79,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withTheme(InventoryManagementScreen);
+export default connect(mapStateToProps)(withTheme(InventoryManagementScreen));

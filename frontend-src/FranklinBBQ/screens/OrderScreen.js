@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Keyboard, StyleSheet, KeyboardAvoidingView, TextInput } from 'react-native';
-import { Text, withTheme, List, Button, TextInput as TextInputPaper } from 'react-native-paper';
+import { Text, withTheme, List, Button, TextInput as TextInputPaper, IconButton } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import DismissableKeyboard from '../components/DismissableKeyboard';
@@ -54,7 +54,7 @@ const OrderScreen = ({
         <DismissableKeyboard>
             <View style={{flex: 1}}>
                 <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} />
-                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} />
+                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
                 <Button 
@@ -110,12 +110,13 @@ const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemS
     ));
 };
 
-const OrderDrawer = ({ newOrderItems, changeOrderItemStatus }) => {
+const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder }) => {
     const args = {
         itemList: newOrderItems,
         status: 'in_order',
         displayQuantityKey: 'item_quantity_ordered',
         changeOrderItemStatus,
+        cudItemInOrder,
     };
 
     return (
@@ -170,6 +171,13 @@ const ListItem = withTheme(({
         style: [OrderStyles.listItemStyles.listItem],
         leftIconColor: colors.inactive,
     };
+
+    let deleteButton;
+    const deleteItem = () => {
+        cudItemInOrder(itemId, 0);
+        changeOrderItemStatus(itemId, 'available');
+    };
+
     switch (status) {
         case 'available':
             listItemPropValues.leftIcon = 'plus-circle';
@@ -198,10 +206,23 @@ const ListItem = withTheme(({
             listItemPropValues.leftIcon = 'check-circle';
             listItemPropValues.leftIconColor = colors.primary;
             listItemPropValues.rightNode = 
-                <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
-                    {listItemPropValues.rightNode}
+                <View style={OrderStyles.listItemStyles.orderedQuantityContainer}>
+                    <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
+                        {listItemPropValues.rightNode}
+                    </View>
+                    <IconButton
+                        icon={props => <FontAwesome5 name='minus-circle' {...props} />}
+                        color={colors.destructiveAction}
+                        onPress={() => deleteItem()}
+                    />
                 </View>;
             listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
+            deleteButton = 
+                <IconButton
+                    icon={props => <FontAwesome5 name='minus-circle' {...props} />}
+                    color={colors.destructiveAction}
+                    onPress={() => deleteItem()}
+                />;
             break;
     }
 

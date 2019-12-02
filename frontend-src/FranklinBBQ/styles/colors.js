@@ -10,4 +10,5 @@ export const colors = {
         gray: '#C8C8C8',
     },
     inlineInput: '#E9E6D0',
+    destructiveAction: '#ea4612',
 };

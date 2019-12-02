@@ -46,6 +46,10 @@ export const listItemStyles = StyleSheet.create({
         padding: 4,
         width: 40,
     },
+    orderedQuantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     displayQuantity: {
         textAlign: 'center',
         textAlignVertical: 'center',

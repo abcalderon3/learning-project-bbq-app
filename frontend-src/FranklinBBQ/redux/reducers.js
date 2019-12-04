@@ -47,27 +47,24 @@ const newOrder = (state = {
                 ...state,
                 party_size: action.partySize,
             };
-        case 'ADD_ITEM_TO_ORDER':
-            return {
-                ...state,
-                items: [
+        case 'CREATE_UPDATE_DELETE_ITEM_IN_ORDER':
+            let items = [];
+            if (action.item_id && !action.item_quantity_ordered) {
+                items = state.items.filter(item => item.item_id != action.item_id);
+            } else if (state.items.find(item => item.item_id === action.item_id)) {
+                items = state.items.map(item => {
+                    return item.item_id === action.item_id ? 
+                        { ...item, item_quantity_ordered: action.item_quantity_ordered } : 
+                        item;
+                });
+            } else {
+                items = [
                     ...state.items,
                     {
                         item_id: action.item_id,
-                        item_quantity_ordered: action.item_quantity_ordered
+                        item_quantity_ordered: action.item_quantity_ordered,
                     },
-                ]
-            };
-        case 'EDIT_ITEM_ORDERED':
-            let items = [];
-            if (action.editedItem.item_quantity_ordered == 0) {
-                items = state.items.filter(item => item.item_id != action.editedItem.item_id);
-            } else {
-                items = state.items.map(item => {
-                    return item.item_id === action.editedItem.item_id ? 
-                        { ...item, item_quantity_ordered: action.editedItem.item_quantity_ordered } : 
-                        item;
-                });
+                ];
             }
             return {
                 ...state,

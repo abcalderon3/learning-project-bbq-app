@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Keyboard, StyleSheet, KeyboardAvoidingView, TextInput } from 'react-native';
-import { Text, withTheme, List, Button, TextInput as TextInputPaper } from 'react-native-paper';
+import { Text, withTheme, List, Button, TextInput as TextInputPaper, IconButton } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import DismissableKeyboard from '../components/DismissableKeyboard';
@@ -13,54 +13,50 @@ const OrderScreen = ({
     newOrder = {items: []}, 
     theme, 
     editPartySize,
-    addItemToOrder,
-    editItemOrdered,
+    cudItemInOrder,
     submitNewOrder,
     navigation,
 }) => {
-    // Calculate which items are available vs. in the order and provide all display data
-    const [availableItems, setAvailableItems] = useState([]);
-    const [newOrderItems, setNewOrderItems] = useState([]);
+    const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
 
     useEffect(() => {
-        let newOrderItemList = [];
-        let availableItemList = [];
-        inventoryItems.forEach(item => {
+        setItemsOrderStatus(inventoryItems.map((item) => {
             const foundNewOrderItem = newOrder.items.find((newOrderItem) => newOrderItem.item_id === item.item_id );
             if (foundNewOrderItem) {
-                newOrderItemList.push({...item, ...foundNewOrderItem});
+                return {
+                    ...item,
+                    ...foundNewOrderItem,
+                    status: 'in_order'
+                };
             } else {
-                availableItemList.push(item);
+                return {
+                    ...item,
+                    status: 'available'
+                };
             }
-        });
-        setAvailableItems(availableItemList);
-        setNewOrderItems(newOrderItemList);
+        }));
     }, [inventoryItems, newOrder.items]);
 
-    const [selectedItems, setSelectedItems] = useState([]);
-
-    const onSelectItem = (selectedItemId) => {        
-        // Pull the selectedItem out of availableItems (with only one pass of the array)
-        const [selectedItem, availableItemsSansSelected] = 
-            availableItems.reduce((result, element) => {
-                result[element.item_id === selectedItemId ? 0 : 1].push(element);
-                return result;
-            }, [[],[]]);
-        setSelectedItems(selectedItems.concat(selectedItem));
-        setAvailableItems(availableItemsSansSelected);
-    };
-
-    const onUnselectItem = (selectedItemId) => {
-        setSelectedItems(selectedItems.filter(item => item.item_id != selectedItemId));
+    const onChangeOrderItemStatus = (itemId, newStatus) => {
+        setItemsOrderStatus(itemsOrderStatus.map((item) => {
+            if (item.item_id === itemId) {
+                return {
+                    ...item,
+                    status: newStatus,
+                };
+            } else {
+                return item;
+            }
+        }));
     };
 
     return (
         <DismissableKeyboard>
             <View style={{flex: 1}}>
                 <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} />
-                <OrderDrawer newOrderItems={newOrderItems} />
-                <SelectedDrawer selectedItems={selectedItems} onSelectionCompletion={addItemToOrder} onUnselectItem={onUnselectItem} />
-                <AvailableDrawer availableItems={availableItems} onSelectItem={onSelectItem} />
+                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
+                <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
+                <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
                 <Button 
                     mode='contained' 
                     onPress={() => {
@@ -99,7 +95,7 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
     );
 };
 
-const itemListMapping = ({itemList, status, displayQuantityKey, onSelectItem, onSelectionCompletion, onUnselectItem }) => {
+const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder }) => {
     return itemList.map(item => (
         <ListItem 
             status={status}
@@ -107,19 +103,20 @@ const itemListMapping = ({itemList, status, displayQuantityKey, onSelectItem, on
             itemId={item.item_id}
             itemDisplayName={item.display_name}
             displayQuantity={item[displayQuantityKey]}
-            selectItem={onSelectItem ? onSelectItem : undefined}
-            addItemToOrder={onSelectionCompletion}
-            unselectItem={onUnselectItem}
             currentPercRemaining={item.current_perc_remaining}
+            changeOrderItemStatus={changeOrderItemStatus}
+            cudItemInOrder={cudItemInOrder}
         />
     ));
 };
 
-const OrderDrawer = ({ newOrderItems }) => {
+const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder }) => {
     const args = {
         itemList: newOrderItems,
         status: 'in_order',
-        displayQuantityKey: 'item_quantity_ordered'
+        displayQuantityKey: 'item_quantity_ordered',
+        changeOrderItemStatus,
+        cudItemInOrder,
     };
 
     return (
@@ -127,12 +124,12 @@ const OrderDrawer = ({ newOrderItems }) => {
     );
 };
 
-const SelectedDrawer = ({ selectedItems, onSelectionCompletion, onUnselectItem }) => {
+const SelectedDrawer = ({ selectedItems, changeOrderItemStatus, cudItemInOrder, }) => {
     const args = {
         itemList: selectedItems,
         status: 'selected',
-        onSelectionCompletion,
-        onUnselectItem,
+        changeOrderItemStatus,
+        cudItemInOrder,
     };
 
     return (
@@ -140,12 +137,12 @@ const SelectedDrawer = ({ selectedItems, onSelectionCompletion, onUnselectItem }
     );
 };
 
-const AvailableDrawer = ({ availableItems, onSelectItem }) => {
+const AvailableDrawer = ({ availableItems, changeOrderItemStatus, }) => {
     const args = {
         itemList: availableItems,
         status: 'available',
         displayQuantityKey: 'current_item_quantity',
-        onSelectItem
+        changeOrderItemStatus,
     };
 
     return (
@@ -159,15 +156,14 @@ const ListItem = withTheme(({
     itemDisplayName, 
     displayQuantity, 
     currentPercRemaining,
-    selectItem, 
-    addItemToOrder, 
-    unselectItem,
-    theme 
+    changeOrderItemStatus,
+    cudItemInOrder,
+    theme,
 }) => {
     const completeItemSelection = (event) => {
         // TODO: Add validation against quantity available here
-        addItemToOrder(itemId, parseFloat(event.nativeEvent.text));
-        unselectItem(itemId);
+        cudItemInOrder(itemId, parseFloat(event.nativeEvent.text));
+        changeOrderItemStatus(itemId, 'in_order');
     };
 
     let listItemPropValues = {
@@ -175,10 +171,17 @@ const ListItem = withTheme(({
         style: [OrderStyles.listItemStyles.listItem],
         leftIconColor: colors.inactive,
     };
+
+    let deleteButton;
+    const deleteItem = () => {
+        cudItemInOrder(itemId, 0);
+        changeOrderItemStatus(itemId, 'available');
+    };
+
     switch (status) {
         case 'available':
             listItemPropValues.leftIcon = 'plus-circle';
-            listItemPropValues.onPress = () => selectItem(itemId);
+            listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
             listItemPropValues.rightNode = 
                 <View style={[OrderStyles.listItemStyles.displayQuantityContainer, dynamicQtyBackgroundColor(currentPercRemaining)]}>
                     {listItemPropValues.rightNode}
@@ -203,9 +206,23 @@ const ListItem = withTheme(({
             listItemPropValues.leftIcon = 'check-circle';
             listItemPropValues.leftIconColor = colors.primary;
             listItemPropValues.rightNode = 
-                <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
-                    {listItemPropValues.rightNode}
+                <View style={OrderStyles.listItemStyles.orderedQuantityContainer}>
+                    <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
+                        {listItemPropValues.rightNode}
+                    </View>
+                    <IconButton
+                        icon={props => <FontAwesome5 name='minus-circle' {...props} />}
+                        color={colors.destructiveAction}
+                        onPress={() => deleteItem()}
+                    />
                 </View>;
+            listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
+            deleteButton = 
+                <IconButton
+                    icon={props => <FontAwesome5 name='minus-circle' {...props} />}
+                    color={colors.destructiveAction}
+                    onPress={() => deleteItem()}
+                />;
             break;
     }
 

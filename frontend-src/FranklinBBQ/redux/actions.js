@@ -53,16 +53,11 @@ export const editPartySize = (partySize) => ({
     partySize
 });
 
-export const addItemToOrder = (item_id, item_quantity_ordered) => ({
-    type: 'ADD_ITEM_TO_ORDER',
+// To delete an item from the order, use this action with itemQuantityOrdered = 0
+export const cudItemInOrder = (item_id, item_quantity_ordered) => ({
+    type: 'CREATE_UPDATE_DELETE_ITEM_IN_ORDER',
     item_id,
     item_quantity_ordered,
-});
-
-// To delete an item from the order, use this action with itemQuantityOrdered = 0
-export const editItemOrdered = editedItem => ({
-    type: 'EDIT_ITEM_ORDERED',
-    editedItem
 });
 
 export const beginOrderSubmit = () => ({
@@ -105,7 +100,6 @@ export const submitNewOrder = () => {
 export const orderActions = {
     createNewOrder,
     editPartySize,
-    addItemToOrder,
-    editItemOrdered,
+    cudItemInOrder,
     submitNewOrder,
 };

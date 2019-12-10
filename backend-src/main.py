@@ -266,7 +266,7 @@ def create_new_order():
     if reply.get('error'):
         return json.dumps(reply), 400
 
-    return json.dumps(reply), 200
+    return json.dumps(reply), 201
 
 
 #Discuss error handling

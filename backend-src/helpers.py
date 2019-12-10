@@ -132,12 +132,23 @@ def get_item_snapshot(item_name, item_ref_collection, inventory_day, error_messa
     return document_reference
 
 def create_new_order_helper(order_date, party_size, items, ref):
-    order_id = 'order -' + uuid4().hex
+    order_id = 'order-' + uuid4().hex
     order_doc = ref.document(order_id)
+    
+    order_counter_doc_ref = ref.document('order_counter_by_day')
+    try:
+        current_order_counter = order_counter_doc_ref.get([f'`{order_date}`']).get(f'`{order_date}`')
+    except KeyError:
+        current_order_counter = 0
+        order_counter_doc_ref.update({order_date: current_order_counter})
+
+    order_number = current_order_counter + 1
 
     order_doc.set({
         'date': order_date,
         'party_size': party_size,
+        'timestamp': firestore.SERVER_TIMESTAMP,
+        'order_number': order_number,
     })
 
     item_collection = order_doc.collection('items')
@@ -154,5 +165,7 @@ def create_new_order_helper(order_date, party_size, items, ref):
 
     if not order_doc.id:
         return {'error': 'could not create new order'}
+
+    order_counter_doc_ref.update({ order_date: firestore.Increment(1) })
 
     return {'order_id': order_doc.id}

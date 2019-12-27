@@ -52,7 +52,7 @@ const Navigator = createBottomTabNavigator({
             fontSize: 16
         },
     }
-    
+
 });
 
 export default Navigator;

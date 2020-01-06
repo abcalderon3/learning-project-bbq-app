@@ -4,7 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementContainer from '../containers/InventoryManagementContainer';
-import OrderManagementScreen from '../screens/OrderManagementScreen';
+import OrderManagementContainer from '../containers/OrderManagementContainer';
 import OrderContainer from '../containers/OrderContainer';
 import { colors } from '../styles/colors';
 import { fonts } from '../styles/fonts';
@@ -14,7 +14,7 @@ InventoryManagementContainer.navigationOptions = {
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'edit'} size={focused ? 18 : 14} color={tintColor} />
 };
 
-OrderManagementScreen.navigationOptions = {
+OrderManagementContainer.navigationOptions = {
     title: 'ORDERS',
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'shopping-bag'} size={focused ? 18 : 14} color={tintColor} />
 };
@@ -36,7 +36,7 @@ const TodayNavigator = createStackNavigator({
 });
 
 const Navigator = createBottomTabNavigator({
-    OrderManagement: OrderManagementScreen,
+    OrderManagement: OrderManagementContainer,
     Today: TodayNavigator,
     InventoryManagement: InventoryManagementContainer
 },{

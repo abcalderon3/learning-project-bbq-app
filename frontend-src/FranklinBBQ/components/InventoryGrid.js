@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } 
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
 import InventoryServiceUtility from '../utils/InventoryServiceUtility';
+
 import { remainingColor } from '../styles/dynamicQuantityColor';
 
 const sampleInventoryItems = [

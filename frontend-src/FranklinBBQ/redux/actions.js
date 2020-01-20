@@ -5,7 +5,7 @@ export const setSelectedDate = date => ({
     selectedDate: date
 });
 
-
+// ------------------ INVENTORY DAY ACTIONS ----------------------
 export const requestInventoryDay = inventoryDate => ({
     type: 'REQUEST_INVENTORY_DAY',
     inventoryDate
@@ -42,7 +42,40 @@ export const getInventoryDay = inventoryDate => {
     };
 };
 
+// ------------------ INVENTORY MANAGEMENT ACTIONS ----------------------
+export const beginInventoryQtyUpdate = () => ({
+    type: 'BEGIN_INVENTORY_QUANTITY_UPDATE',
+});
 
+export const confirmInventoryQtyUpdate = (responseOk) => ({
+    type: 'CONFIRM_INVENTORY_QUANTITY_UPDATE',
+    responseOk
+});
+
+export const updateInventoryItemStartQty = (inventoryDateString, itemId, newItemStartQuantity) => {
+    return dispatch => {
+        dispatch(beginInventoryQtyUpdate());
+
+        if (inventoryServiceConfig.enabled) {
+            return fetch(
+                inventoryServiceConfig.serviceUrl + inventoryDateString,
+                {
+                    method: 'PUT',
+                    headers: inventoryServiceConfig.commonHeaders,
+                    body: JSON.stringify({
+                        item_id: itemId,
+                        start_item_quantity: newItemStartQuantity,
+                    })
+                }
+            )
+            .then(response => dispatch(confirmInventoryQtyUpdate(response.ok)));
+        } else {
+            return dispatch(confirmInventoryQtyUpdate(true));
+        }
+    };
+};
+
+// ------------------ ORDER ACTIONS ----------------------
 export const createNewOrder = (orderDate) => ({
     type: 'CREATE_NEW_ORDER',
     orderDate

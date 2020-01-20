@@ -5,13 +5,13 @@ import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
-import {  } from 'react-redux-firebase';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
 const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme }) => {
-    (inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
+    useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
+import DatePicker from 'react-native-datepicker';
 import { List } from 'react-native-paper';
 import { tsPropertySignature } from '@babel/types';
 
@@ -19,6 +20,7 @@ const OrderManagementScreen = ({
   ];
 
   console.log(orders);
+
   // WARNING: testData must be changed to a real value
   return (
       <View style={styles.screenContainer}>
@@ -91,11 +93,47 @@ const ListItems = ({list}) => {
   return outputList;
 };
 
+const DateButton = ({theme}) => {
+  const displayFormat = 'MMM. D, YYYY';
+  const dataFormat = 'YYYY-MM-DD';
+  let currentDate = new Date();
+  return (
+      <DatePicker
+          style={styles.datePicker}
+          date={currentDate}
+          mode="date"
+          placeholder="Select Date..."
+          format={displayFormat}
+          confirmBtnText="Done"
+          cancelBtnText="Cancel"
+          onDateChange={formattedDateString => console.log(formattedDateString)}
+          iconComponent={
+              <FontAwesome5
+                  name='calendar-alt'
+                  size={20}
+                  color={theme.colors.secondary}
+                  style={{ paddingLeft: 10 }}
+              />
+          }
+          customStyles={{
+              dateInput: {
+                  borderColor: theme.colors.secondary,
+                  borderRadius: 5
+              }
+          }}
+      />
+  );
+};
+
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
+    },
+    datePicker: {
+      width: 150,
+      paddingTop: 30,
     }
 });
 

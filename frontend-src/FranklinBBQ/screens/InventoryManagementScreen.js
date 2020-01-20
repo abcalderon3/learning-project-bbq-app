@@ -5,13 +5,13 @@ import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
-import { useFirestoreConnect } from 'react-redux-firebase';
+import {  } from 'react-redux-firebase';
 
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
 const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme }) => {
-    useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
+    (inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>
@@ -35,10 +35,10 @@ const DateButton = ({date, dateChange, theme}) => {
             cancelBtnText="Cancel"
             onDateChange={formattedDateString => dateChange(moment(formattedDateString, displayFormat).format(dataFormat))}
             iconComponent={
-                <FontAwesome5 
-                    name='calendar-alt' 
-                    size={20} 
-                    color={theme.colors.secondary} 
+                <FontAwesome5
+                    name='calendar-alt'
+                    size={20}
+                    color={theme.colors.secondary}
                     style={{ paddingLeft: 10 }}
                 />
             }

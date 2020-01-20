@@ -1,14 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
 import OrderManagementScreen from '../screens/OrderManagementScreen';
 
+const OrderManagementContainer = ({orders}) => {
+    useFirestoreConnect('orders');
+    return (<OrderManagementScreen
+      orders={orders}
+    />);
+};
+
 const mapStateToProps = state => {
+
     return {
-        orders: state.firestore.orders,
+        orders: state.firestore.ordered.orders,
     };
 };
 
-const OrderManagementContainer = connect(mapStateToProps)(OrderManagementScreen);
-
-export default OrderManagementContainer;
+export default connect(mapStateToProps)(OrderManagementContainer);

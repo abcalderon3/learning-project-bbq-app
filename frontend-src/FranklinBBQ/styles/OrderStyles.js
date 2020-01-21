@@ -84,12 +84,10 @@ export const OrderMgmtListItemStyles = StyleSheet.create({
       marginHorizontal: 2,
   },
   listItem: {
-      borderWidth: 0.2,
-      borderRadius: 10,
       marginHorizontal: 5,
       padding: 1,
       borderColor: colors.secondary,
-      borderWidth: 1,
+      borderBottomWidth: 1,
       maxWidth: '95%',
   },
   displayOrder: {

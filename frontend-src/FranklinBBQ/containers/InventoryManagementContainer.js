@@ -4,15 +4,15 @@ import { connect } from 'react-redux';
 import { setSelectedDate, getInventoryDay } from '../redux/actions';
 import InventoryManagementScreen from '../screens/InventoryManagementScreen';
 
-const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inventoryDayPath, getInventoryDay }) => {
+const InventoryManagementContainer = ({ selectedDate, Change, inventoryDayPath, getInventoryDay }) => {
     useEffect(() => {
         getInventoryDay(selectedDate);
     }, [selectedDate]);
 
     return (
-        <InventoryManagementScreen 
+        <InventoryManagementScreen
             selectedDate={selectedDate}
-            onSelectedDateChange={onSelectedDateChange}
+            Change={Change}
             inventoryDayPath={inventoryDayPath}
         />
     );
@@ -27,7 +27,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSelectedDateChange: (date) => dispatch(setSelectedDate(date)),
+        Change: (date) => dispatch(setSelectedDate(date)),
         getInventoryDay: inventoryDate => dispatch(getInventoryDay(inventoryDate)),
     };
 };

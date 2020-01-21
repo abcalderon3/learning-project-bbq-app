@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { List } from 'react-native-paper';
+import { List, withTheme } from 'react-native-paper';
+import moment from 'moment';
 import { tsPropertySignature } from '@babel/types';
 
 import { OrderMgmtListItemStyles } from '../styles/OrderStyles';
@@ -16,14 +17,19 @@ let testData = [
 // Main View for Order Summary by day
 const OrderManagementScreen = ({
   orders = testData,
+  selectedDate,
+  onSelectedDateChange,
   theme,
   navigation,
 }) => {
-  console.log(orders);
-
-  // WARNING: testData must be changed to a real value
+  console.log('order screen: ', orders);
   return (
       <View style={styles.screenContainer}>
+        <DateButton
+          selectedDate={selectedDate}
+          dateChange={onSelectedDateChange}
+          theme={theme}
+        />
         <View
           style={OrderMgmtListItemStyles.listContainer}
         >
@@ -45,7 +51,7 @@ const ListItems = ({list}) => {
         <Text
           style={OrderMgmtListItemStyles.rightText}
         >
-          {orderNumber}
+          Order #: {orderNumber}
         </Text>
         <Text
           numberOfLines={1}
@@ -82,10 +88,14 @@ const ListItems = ({list}) => {
       <List.Item
         right={props => <RightNode {...props}
             orderSummary={item.orderSummary}
-            orderNumber={item.orderNumber}
+            orderNumber={item.order_number}
         />}
-        left={props => <LeftNode {...props} partySize={item.partySize} />}
+        left={props => <LeftNode {...props} partySize={item.party_size} />}
         style={OrderMgmtListItemStyles.listItem}
+        key={item.id}
+        onPress={() => {
+          console.log('pressed');
+        }}
       />
     )
   });
@@ -93,20 +103,20 @@ const ListItems = ({list}) => {
   return outputList;
 };
 
-const DateButton = ({theme}) => {
+const DateButton = ({ selectedDate, dateChange, theme}) => {
   const displayFormat = 'MMM. D, YYYY';
   const dataFormat = 'YYYY-MM-DD';
   let currentDate = new Date();
   return (
       <DatePicker
           style={styles.datePicker}
-          date={currentDate}
+          date={moment(selectedDate).format(displayFormat)}
           mode="date"
           placeholder="Select Date..."
           format={displayFormat}
           confirmBtnText="Done"
           cancelBtnText="Cancel"
-          onDateChange={formattedDateString => console.log(formattedDateString)}
+          onDateChange={formattedDateString => dateChange(moment(formattedDateString, displayFormat).format(dataFormat))}
           iconComponent={
               <FontAwesome5
                   name='calendar-alt'
@@ -128,13 +138,14 @@ const DateButton = ({theme}) => {
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'flex-start',
     },
     datePicker: {
       width: 150,
       paddingTop: 30,
+      marginBottom: 40,
     }
 });
 
-export default OrderManagementScreen;
+export default withTheme(OrderManagementScreen);

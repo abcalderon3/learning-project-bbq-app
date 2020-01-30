@@ -10,13 +10,13 @@ import { useFirestoreConnect } from 'react-redux-firebase';
 import InventoryGrid from '../components/InventoryGrid';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 
-const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme }) => {
+const InventoryManagementScreen = ({ selectedDate, onSelectedDateChange, inventoryDayPath, inventoryItems, theme, updateInventoryItemStartQty }) => {
     useFirestoreConnect(inventoryDayPath ? [inventoryDayPath + '/items', 'item_ref'] : 'item_ref');
 
     return (
         <View style={styles.screenContainer}>
             <DateButton date={selectedDate} dateChange={onSelectedDateChange} theme={theme} />
-            <InventoryGrid inventoryDateString={selectedDate} inventoryItems={inventoryItems} editMode={true} />
+            <InventoryGrid inventoryDateString={selectedDate} inventoryItems={inventoryItems} editMode={true} updateInventoryItemStartQty={updateInventoryItemStartQty} />
         </View>
     );
 };

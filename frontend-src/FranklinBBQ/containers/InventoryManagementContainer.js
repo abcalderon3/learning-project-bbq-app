@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { setSelectedDate, getInventoryDay } from '../redux/actions';
+import { setSelectedDate, getInventoryDay, updateInventoryItemStartQty } from '../redux/actions';
 import InventoryManagementScreen from '../screens/InventoryManagementScreen';
 
-const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inventoryDayPath, getInventoryDay }) => {
+const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inventoryDayPath, getInventoryDay, updateInventoryItemStartQty }) => {
     useEffect(() => {
         getInventoryDay(selectedDate);
     }, [selectedDate]);
@@ -14,6 +14,7 @@ const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inve
             selectedDate={selectedDate}
             onSelectedDateChange={onSelectedDateChange}
             inventoryDayPath={inventoryDayPath}
+            updateInventoryItemStartQty={updateInventoryItemStartQty}
         />
     );
 };
@@ -29,6 +30,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onSelectedDateChange: (date) => dispatch(setSelectedDate(date)),
         getInventoryDay: inventoryDate => dispatch(getInventoryDay(inventoryDate)),
+        updateInventoryItemStartQty: (inventoryDateString, itemId, newItemStartQuantity) => dispatch(updateInventoryItemStartQty(inventoryDateString, itemId, newItemStartQuantity)),
     };
 };
 

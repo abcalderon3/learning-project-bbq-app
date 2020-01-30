@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import { Surface, Text, TouchableRipple } from 'react-native-paper';
 
-import InventoryServiceUtility from '../utils/InventoryServiceUtility';
-
 import { remainingColor } from '../styles/dynamicQuantityColor';
 
 const sampleInventoryItems = [
@@ -25,14 +23,10 @@ const sampleInventoryItems = [
 ];
 
 // Displays inventory items based on fetched data
-const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateString, editMode }) => {
-    const InventoryService = new InventoryServiceUtility();
+const InventoryGrid = ({ inventoryItems = sampleInventoryItems, inventoryDateString, editMode, updateInventoryItemStartQty }) => {
 
-    const handleItemStartQuantityChange = async (itemId, newItemStartQuantity) => {
-        let updateSuccessful = await InventoryService.updateItemStartQuantity(inventoryDateString, itemId, newItemStartQuantity);
-        if (!updateSuccessful) {
-            Alert.alert('Whoops!', 'Failed to update the item.')
-        }
+    const handleItemStartQuantityChange = (itemId, newItemStartQuantity) => {
+        updateInventoryItemStartQty(inventoryDateString, itemId, newItemStartQuantity);
     };
 
     let inventoryItemsToRender;

@@ -4,7 +4,7 @@ const urls = {
 };
 
 export const inventoryServiceConfig = {
-    serviceUrl: urls.gcp,
+    serviceUrl: urls.local,
     enabled: false,
     commonHeaders: {
         Accept: 'application/json',

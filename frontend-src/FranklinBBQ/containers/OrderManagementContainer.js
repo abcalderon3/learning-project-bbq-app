@@ -11,7 +11,16 @@ const OrderManagementContainer = ({ selectedDate, orders, onSelectedDateChange }
     useFirestoreConnect(() => [{
       collection: 'orders',
       where: ['date', '==', selectedDate],
+      // subcollections: [{ collection: 'items' }],
+      // storeAs: 'order-items'
     }]);
+    // useFirestoreConnect({
+    //   collection: 'orders',
+    //   doc: orders ? [Object.keys(orders)] : null,
+    //   subcollections: [{
+    //     collection: 'items'
+    //   }],
+    // });
 
     return (<OrderManagementScreen
       selectedDate={selectedDate}

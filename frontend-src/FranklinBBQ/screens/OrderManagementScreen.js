@@ -18,11 +18,13 @@ let testData = [
 const OrderManagementScreen = ({
   orders = testData,
   selectedDate,
+  orderedItems = [],
+  itemRef = [],
   onSelectedDateChange,
   theme,
   navigation,
 }) => {
-  console.log('order screen: ', orders);
+
   return (
       <View style={styles.screenContainer}>
         <DateButton
@@ -35,13 +37,15 @@ const OrderManagementScreen = ({
         >
           <ListItems
             list={orders}
+            orderedItems={orderedItems}
+            itemRef={itemRef}
           />
         </View>
       </View>
   );
 };
 
-const ListItems = ({list}) => {
+const ListItems = ({list, orderedItems, itemRef}) => {
   // Right node of ListItems
   const RightNode = ({orderNumber, orderSummary, ...props}) => {
     return (
@@ -82,17 +86,35 @@ const ListItems = ({list}) => {
       </View>
     )
   }
+  // Order Summary
+  const OrderSummary = (itemId, orderedItems, itemRef) => {
+    const items = orderedItems[itemId];
+    let outputArray = [];
+
+    // Error thrown if items is undefined
+    if (items) {
+      Object.keys(items).forEach((key) => {
+        // cannot convert null to string
+        let quantity = items[key].item_quantity_order ? items[key].item_quantity_order : 'NA';
+        let newText = `${quantity} ${itemRef[key].display_name}`;
+        outputArray.push(newText);
+      })
+    }
+
+    return outputArray.join(', ')
+  }
 
   const outputList = list.map((item) => {
+    const orderSummaryText = OrderSummary(item.id, orderedItems, itemRef);
     return(
       <List.Item
+        key={item.id}
         right={props => <RightNode {...props}
-            orderSummary={item.orderSummary}
+            orderSummary={orderSummaryText}
             orderNumber={item.order_number}
         />}
         left={props => <LeftNode {...props} partySize={item.party_size} />}
         style={OrderMgmtListItemStyles.listItem}
-        key={item.id}
         onPress={() => {
           console.log('pressed');
         }}

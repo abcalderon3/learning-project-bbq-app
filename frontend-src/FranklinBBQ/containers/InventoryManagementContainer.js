@@ -12,7 +12,7 @@ const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inve
     return (
         <InventoryManagementScreen
             selectedDate={selectedDate}
-            Change={Change}
+            onSelectedDateChange={onSelectedDateChange}
             inventoryDayPath={inventoryDayPath}
             updateInventoryItemStartQty={updateInventoryItemStartQty}
         />
@@ -28,7 +28,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        Change: (date) => dispatch(setSelectedDate(date)),
+        onSelectedDateChange: (date) => dispatch(setSelectedDate(date)),
         getInventoryDay: inventoryDate => dispatch(getInventoryDay(inventoryDate)),
         updateInventoryItemStartQty: (inventoryDateString, itemId, newItemStartQuantity) => dispatch(updateInventoryItemStartQty(inventoryDateString, itemId, newItemStartQuantity)),
     };

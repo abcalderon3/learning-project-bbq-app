@@ -8,12 +8,10 @@ import { setSelectedDate } from '../redux/actions';
 const OrderManagementContainer = ({ selectedDate, orders, orderIds, orderedItems, itemRef, onSelectedDateChange }) => {
     // @todo: we will need to set default values for today's date new Date()
 
-    useFirestoreConnect(['item_ref']);
-
     useFirestoreConnect(() => [{
       collection: 'orders',
       where: ['date', '==', selectedDate],
-    }]);
+    }], [selectedDate]);
 
     // Subcollection Queries, defaults to empty set
     let subCollections = [];

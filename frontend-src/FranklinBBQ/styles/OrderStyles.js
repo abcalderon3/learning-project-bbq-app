@@ -4,7 +4,7 @@ import { fonts } from './fonts';
 
 export const partySizeInputStyles = StyleSheet.create({
     container: {
-        flexDirection:'row', 
+        flexDirection:'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 30,
@@ -12,7 +12,7 @@ export const partySizeInputStyles = StyleSheet.create({
     },
     label: {
         flex: 3,
-        fontSize: 20, 
+        fontSize: 20,
         textAlign: 'center',
     },
     textInput: {
@@ -67,6 +67,40 @@ export const listItemStyles = StyleSheet.create({
         borderRadius: 10,
         color: colors.secondary,
     },
+});
+
+// OrderManagement Screen List Styles
+export const OrderMgmtListItemStyles = StyleSheet.create({
+  rightText: {
+  },
+  rightNodeContainer: {
+      justifyContent: 'center',
+      marginVertical: 1,
+      width: '80%',
+  },
+  leftNodeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginHorizontal: 2,
+  },
+  listItem: {
+      marginHorizontal: 5,
+      padding: 1,
+      borderColor: colors.secondary,
+      borderBottomWidth: 1,
+      maxWidth: '95%',
+  },
+  displayOrder: {
+      textAlign: 'center',
+      textAlignVertical: 'center',
+  },
+  listItemSelected: {
+      borderColor: colors.secondary,
+      borderWidth: 1,
+  },
+  listContainer: {
+      marginVertical: 10,
+  },
 });
 
 export const OrderDrawer = StyleSheet.create({

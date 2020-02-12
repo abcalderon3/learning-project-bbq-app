@@ -35,10 +35,10 @@ const DateButton = ({date, dateChange, theme}) => {
             cancelBtnText="Cancel"
             onDateChange={formattedDateString => dateChange(moment(formattedDateString, displayFormat).format(dataFormat))}
             iconComponent={
-                <FontAwesome5 
-                    name='calendar-alt' 
-                    size={20} 
-                    color={theme.colors.secondary} 
+                <FontAwesome5
+                    name='calendar-alt'
+                    size={20}
+                    color={theme.colors.secondary}
                     style={{ paddingLeft: 10 }}
                 />
             }

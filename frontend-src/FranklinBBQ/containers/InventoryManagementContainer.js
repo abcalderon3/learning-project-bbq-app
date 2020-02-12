@@ -10,7 +10,7 @@ const InventoryManagementContainer = ({ selectedDate, onSelectedDateChange, inve
     }, [selectedDate]);
 
     return (
-        <InventoryManagementScreen 
+        <InventoryManagementScreen
             selectedDate={selectedDate}
             onSelectedDateChange={onSelectedDateChange}
             inventoryDayPath={inventoryDayPath}

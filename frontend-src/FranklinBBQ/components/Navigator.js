@@ -14,10 +14,12 @@ InventoryManagementContainer.navigationOptions = {
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'edit'} size={focused ? 18 : 14} color={tintColor} />
 };
 
+/*
 OrderManagementContainer.navigationOptions = {
     title: 'ORDERS',
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'shopping-bag'} size={focused ? 18 : 14} color={tintColor} />
 };
+*/
 
 const TodayNavigator = createStackNavigator({
     InventorySummary: InventorySummaryScreen,
@@ -35,8 +37,24 @@ const TodayNavigator = createStackNavigator({
     }
 });
 
+const OrderManagementNavigator = createStackNavigator({
+  OrderManagement: OrderManagementContainer,
+  ViewOrder: OrderContainer
+},{
+  initialRouteName: 'OrderManagement',
+  navigationOptions: {
+      title: 'ORDERS',
+      tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
+  },
+  mode: 'modal',
+  headerMode: 'none',
+  cardStyle: {
+      backgroundColor: colors.background
+  }
+});
+
 const Navigator = createBottomTabNavigator({
-    OrderManagement: OrderManagementContainer,
+    OrderManagement: OrderManagementNavigator,
     Today: TodayNavigator,
     InventoryManagement: InventoryManagementContainer
 },{

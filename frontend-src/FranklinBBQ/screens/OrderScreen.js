@@ -8,14 +8,16 @@ import * as OrderStyles from '../styles/OrderStyles';
 import { dynamicQtyBackgroundColor } from '../styles/dynamicQuantityColor';
 import { colors } from '../styles/colors';
 
-const OrderScreen = ({ 
-    inventoryItems, 
-    newOrder = {items: []}, 
-    theme, 
+const OrderScreen = ({
+    inventoryItems,
+    newOrder = {items: []},
+    theme,
     editPartySize,
     cudItemInOrder,
     submitNewOrder,
     navigation,
+    navRoute,
+    editStatus = false,
 }) => {
     const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
 
@@ -57,12 +59,12 @@ const OrderScreen = ({
                 <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
-                <Button 
-                    mode='contained' 
+                <Button
+                    mode='contained'
                     onPress={() => {
                         submitNewOrder();
-                        navigation.navigate('InventorySummary');
-                    }} 
+                        navigation.navigate(navRoute);
+                    }}
                     style={OrderStyles.button.container}
                 >
                     <Text style={OrderStyles.button.label}>SAVE</Text>
@@ -97,7 +99,7 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
 
 const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder }) => {
     return itemList.map(item => (
-        <ListItem 
+        <ListItem
             status={status}
             key={item.item_id}
             itemId={item.item_id}
@@ -150,11 +152,11 @@ const AvailableDrawer = ({ availableItems, changeOrderItemStatus, }) => {
     );
 };
 
-const ListItem = withTheme(({ 
-    status, 
-    itemId, 
-    itemDisplayName, 
-    displayQuantity, 
+const ListItem = withTheme(({
+    status,
+    itemId,
+    itemDisplayName,
+    displayQuantity,
     currentPercRemaining,
     changeOrderItemStatus,
     cudItemInOrder,
@@ -182,7 +184,7 @@ const ListItem = withTheme(({
         case 'available':
             listItemPropValues.leftIcon = 'plus-circle';
             listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <View style={[OrderStyles.listItemStyles.displayQuantityContainer, dynamicQtyBackgroundColor(currentPercRemaining)]}>
                     {listItemPropValues.rightNode}
                 </View>;
@@ -191,7 +193,7 @@ const ListItem = withTheme(({
             listItemPropValues.style.push(OrderStyles.listItemStyles.listItemSelected);
             listItemPropValues.leftIcon = 'arrow-alt-circle-up';
             listItemPropValues.leftIconColor = colors.secondary;
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <TextInput
                     onEndEditing={completeItemSelection}
                     onBlur={() => Keyboard.dismiss()}
@@ -205,7 +207,7 @@ const ListItem = withTheme(({
             listItemPropValues.style.push(OrderStyles.listItemStyles.listItemOrdered);
             listItemPropValues.leftIcon = 'check-circle';
             listItemPropValues.leftIconColor = colors.primary;
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <View style={OrderStyles.listItemStyles.orderedQuantityContainer}>
                     <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
                         {listItemPropValues.rightNode}
@@ -217,7 +219,7 @@ const ListItem = withTheme(({
                     />
                 </View>;
             listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
-            deleteButton = 
+            deleteButton =
                 <IconButton
                     icon={props => <FontAwesome5 name='minus-circle' {...props} />}
                     color={colors.destructiveAction}
@@ -227,7 +229,7 @@ const ListItem = withTheme(({
     }
 
     return (
-        <List.Item 
+        <List.Item
             title={itemDisplayName}
             left={props => <List.Icon {...props} color={listItemPropValues.leftIconColor} icon={props => <FontAwesome5 name={listItemPropValues.leftIcon} {...props} />} />}
             right={props => listItemPropValues.rightNode}

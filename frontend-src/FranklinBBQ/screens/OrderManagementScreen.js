@@ -39,13 +39,14 @@ const OrderManagementScreen = ({
             list={orders}
             orderedItems={orderedItems}
             itemRef={itemRef}
+            navigation={navigation}
           />
         </View>
       </View>
   );
 };
 
-const ListItems = ({list, orderedItems, itemRef}) => {
+const ListItems = ({list, orderedItems, itemRef, navigation}) => {
   // Right node of ListItems
   const RightNode = ({orderNumber, orderSummary, ...props}) => {
     return (
@@ -104,6 +105,7 @@ const ListItems = ({list, orderedItems, itemRef}) => {
     return outputArray.join(', ')
   }
 
+  // List that is Outputted
   const outputList = list.map((item) => {
     const orderSummaryText = OrderSummary(item.id, orderedItems, itemRef);
     return(
@@ -116,7 +118,7 @@ const ListItems = ({list, orderedItems, itemRef}) => {
         left={props => <LeftNode {...props} partySize={item.party_size} />}
         style={OrderMgmtListItemStyles.listItem}
         onPress={() => {
-          console.log('pressed');
+          navigation.navigate('ViewOrder');
         }}
       />
     )

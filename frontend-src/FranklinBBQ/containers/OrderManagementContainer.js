@@ -5,7 +5,7 @@ import { useFirestoreConnect, isLoaded } from 'react-redux-firebase';
 import OrderManagementScreen from '../screens/OrderManagementScreen';
 import { setSelectedDate } from '../redux/actions';
 
-const OrderManagementContainer = ({ selectedDate, orders, orderIds, orderedItems, itemRef, onSelectedDateChange }) => {
+const OrderManagementContainer = ({ selectedDate, orders, orderIds, orderedItems, itemRef, onSelectedDateChange, navigation }) => {
     // @todo: we will need to set default values for today's date new Date()
 
     useFirestoreConnect(() => [{
@@ -31,6 +31,7 @@ const OrderManagementContainer = ({ selectedDate, orders, orderIds, orderedItems
         orders={orders}
         orderedItems={orderedItems}
         itemRef={itemRef}
+        navigation={navigation}
       />);
     }
 };

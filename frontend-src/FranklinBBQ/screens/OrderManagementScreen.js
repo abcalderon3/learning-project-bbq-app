@@ -118,7 +118,7 @@ const ListItems = ({list, orderedItems, itemRef, navigation}) => {
         left={props => <LeftNode {...props} partySize={item.party_size} />}
         style={OrderMgmtListItemStyles.listItem}
         onPress={() => {
-          navigation.navigate('ViewOrder');
+          navigation.navigate('ViewOrder', { existingOrderId: item.id });
         }}
       />
     )

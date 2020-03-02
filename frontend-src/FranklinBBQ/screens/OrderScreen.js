@@ -18,8 +18,10 @@ const OrderScreen = ({
     navigation,
     navRoute,
     editStatus = false,
+    existingOrderId = false,
 }) => {
     const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
+    const editMode = existingOrderId ? false : true;
 
     useEffect(() => {
         setItemsOrderStatus(inventoryItems.map((item) => {
@@ -55,7 +57,7 @@ const OrderScreen = ({
     return (
         <DismissableKeyboard>
             <View style={{flex: 1}}>
-                <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} />
+                <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} editMode={editMode} />
                 <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
                 <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
@@ -74,7 +76,7 @@ const OrderScreen = ({
     );
 };
 
-const PartySizeInput = ({ handlePartySizeChange, theme }) => {
+const PartySizeInput = ({ partySize, handlePartySizeChange, theme, editMode }) => {
     const handlePartySizeInput = (event) => {
         handlePartySizeChange(parseInt(event.nativeEvent.text));
     };
@@ -83,12 +85,13 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
         <View style={OrderStyles.partySizeInputStyles.container}>
             <Text style={OrderStyles.partySizeInputStyles.label}>Party Size</Text>
             <TextInputPaper
+                value={(partySize || 0).toString()}
                 onEndEditing={handlePartySizeInput}
                 onBlur={() => Keyboard.dismiss()}
                 mode='outlined'
                 keyboardType='numeric'
                 clearTextOnFocus={true}
-                autoFocus={true}
+                autoFocus={editMode}
                 style={OrderStyles.partySizeInputStyles.textInput}
                 selectionColor={theme.colors.secondary}
                 theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}

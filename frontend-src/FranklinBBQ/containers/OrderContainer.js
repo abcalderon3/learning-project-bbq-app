@@ -64,17 +64,6 @@ const mapStateToProps = (state, { navigation }) => {
     };
 };
 
-// orderActions is a mapDispatchToProps as an object and can be used directly with connect HOC
-// Utilizing mapDispatchToProps in order to switch out submitNewOrder
-const mapDispatchToProps = dispatch => {
-  const { editPartySize, cudItemInOrder, submitNewOrder } = orderActions;
-  return {
-    editPartySize: () => dispatch(editPartySize()),
-    cudItemInOrder: () => dispatch(cudItemInOrder()),
-    submitNewOrder: () => dispatch(submitNewOrder()),
-  }
-}
-
 const OrderContainer = connect(mapStateToProps, orderActions)(IntermediateOrderScreen);
 
 export default OrderContainer;

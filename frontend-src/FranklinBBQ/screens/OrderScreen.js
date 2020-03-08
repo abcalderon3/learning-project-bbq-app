@@ -17,7 +17,6 @@ const OrderScreen = ({
     submitNewOrder,
     navigation,
     navRoute,
-    editStatus = false,
     existingOrderId = false,
 }) => {
     const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
@@ -58,19 +57,26 @@ const OrderScreen = ({
         <DismissableKeyboard>
             <View style={{flex: 1}}>
                 <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} editMode={editMode} />
-                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
-                <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
-                <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
-                <Button
-                    mode='contained'
-                    onPress={() => {
-                        submitNewOrder();
-                        navigation.navigate(navRoute);
-                    }}
-                    style={OrderStyles.button.container}
-                >
-                    <Text style={OrderStyles.button.label}>SAVE</Text>
-                </Button>
+                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} editMode={editMode}/>
+                <View>
+                  {editMode ?
+                    <View>
+                      <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
+                      <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
+                      <Button
+                          mode='contained'
+                          onPress={() => {
+                              submitNewOrder();
+                              navigation.navigate(navRoute);
+                          }}
+                          style={OrderStyles.button.container}
+                      >
+                          <Text style={OrderStyles.button.label}>SAVE</Text>
+                      </Button>
+                    </View>
+                    : null
+                  }
+                </View>
             </View>
         </DismissableKeyboard>
     );
@@ -92,6 +98,7 @@ const PartySizeInput = ({ partySize, handlePartySizeChange, theme, editMode }) =
                 keyboardType='numeric'
                 clearTextOnFocus={true}
                 autoFocus={editMode}
+                disabled={!editMode}
                 style={OrderStyles.partySizeInputStyles.textInput}
                 selectionColor={theme.colors.secondary}
                 theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}
@@ -100,7 +107,7 @@ const PartySizeInput = ({ partySize, handlePartySizeChange, theme, editMode }) =
     );
 };
 
-const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder }) => {
+const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder, editMode = true }) => {
     return itemList.map(item => (
         <ListItem
             status={status}
@@ -111,17 +118,19 @@ const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemS
             currentPercRemaining={item.current_perc_remaining}
             changeOrderItemStatus={changeOrderItemStatus}
             cudItemInOrder={cudItemInOrder}
+            editMode={editMode}
         />
     ));
 };
 
-const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder }) => {
+const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder, editMode }) => {
     const args = {
         itemList: newOrderItems,
         status: 'in_order',
         displayQuantityKey: 'item_quantity_ordered',
         changeOrderItemStatus,
         cudItemInOrder,
+        editMode,
     };
 
     return (
@@ -163,6 +172,7 @@ const ListItem = withTheme(({
     currentPercRemaining,
     changeOrderItemStatus,
     cudItemInOrder,
+    editMode,
     theme,
 }) => {
     const completeItemSelection = (event) => {
@@ -221,7 +231,7 @@ const ListItem = withTheme(({
                         onPress={() => deleteItem()}
                     />
                 </View>;
-            listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
+            listItemPropValues.onPress = () => editMode ? changeOrderItemStatus(itemId, 'selected') : null;
             deleteButton =
                 <IconButton
                     icon={props => <FontAwesome5 name='minus-circle' {...props} />}

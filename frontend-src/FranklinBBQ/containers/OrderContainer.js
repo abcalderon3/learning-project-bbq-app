@@ -11,7 +11,8 @@ const IntermediateOrderScreen = ({
   editPartySize,
   cudItemInOrder,
   submitNewOrder,
-  navigation
+  navigation,
+  existingOrderId
   }) => {
   const navRoute = 'InventorySummary';
 
@@ -24,11 +25,12 @@ const IntermediateOrderScreen = ({
       submitNewOrder={submitNewOrder}
       navigation={navigation}
       navRoute={navRoute}
+      existingOrderId={existingOrderId}
     />
   )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, { navigation }) => {
     let inventoryItems;
     if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
         if (state.firestore.data.daily_inventories[state.todayDate]) {
@@ -39,9 +41,26 @@ const mapStateToProps = state => {
         }
     }
 
+    const existingOrderId = navigation.getParam('existingOrderId', false);
+
+    let newOrder;
+    if (existingOrderId) {
+      newOrder = state.firestore.data.orders[existingOrderId];
+      const orderItemsKey = 'order-items-' + existingOrderId;
+      newOrder.items = Object.entries(state.firestore.data[orderItemsKey]).map(([orderItemId, orderItemObj]) => {
+        return {
+          item_id: orderItemId,
+          item_quantity_ordered: orderItemObj.item_quantity_order,
+        };
+      });
+    } else {
+      newOrder = state.newOrder;
+    }
+
     return {
         inventoryItems,
-        newOrder: state.newOrder,
+        newOrder,
+        existingOrderId,
     };
 };
 
@@ -56,6 +75,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const OrderContainer = connect(mapStateToProps, mapDispatchToProps)(IntermediateOrderScreen);
+const OrderContainer = connect(mapStateToProps, orderActions)(IntermediateOrderScreen);
 
 export default OrderContainer;

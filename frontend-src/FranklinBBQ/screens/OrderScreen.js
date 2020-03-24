@@ -225,11 +225,17 @@ const ListItem = withTheme(({
                     <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
                         {listItemPropValues.rightNode}
                     </View>
-                    <IconButton
+                    <View>
+                      {
+                        editMode ?
+                        <IconButton
                         icon={props => <FontAwesome5 name='minus-circle' {...props} />}
                         color={colors.destructiveAction}
                         onPress={() => deleteItem()}
-                    />
+                        />
+                        : null
+                      }
+                    </View>
                 </View>;
             listItemPropValues.onPress = () => editMode ? changeOrderItemStatus(itemId, 'selected') : null;
             deleteButton =

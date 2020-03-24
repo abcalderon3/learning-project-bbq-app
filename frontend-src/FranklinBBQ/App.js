@@ -11,15 +11,13 @@ import { ReactReduxFirebaseProvider, ReduxFirestoreProvider } from 'react-redux-
 import { createFirestoreInstance } from 'redux-firestore';
 import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { createAppContainer } from 'react-navigation';
+
 
 import rootReducer from './redux/reducers';
-import Header from './components/Header';
-import Navigator from './components/Navigator';
+import AppContainer from './containers/AppContainer';
+
 import { colors } from './styles/colors';
 import { fonts } from './styles/fonts';
-
-const AppContainer = createAppContainer(Navigator);
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunkMiddleware)));
 
@@ -40,10 +38,7 @@ const App = () => {
       <ReactReduxFirebaseProvider {...reduxReactFirebaseConfig}>
         <ReduxFirestoreProvider {...reduxReactFirebaseConfig}>
           <PaperProvider theme={theme}>
-            <View style={styles.safeContainer}>
-              <Header />
-              <AppContainer />
-            </View>
+            <AppContainer />
           </PaperProvider>
         </ReduxFirestoreProvider>
       </ReactReduxFirebaseProvider>
@@ -68,7 +63,7 @@ const theme = {
 
 const styles = StyleSheet.create({
   safeContainer: {
-    flex: 1, 
+    flex: 1,
     backgroundColor: theme.colors.background,
   },
 });

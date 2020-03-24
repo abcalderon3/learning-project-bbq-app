@@ -6,6 +6,7 @@ import InventorySummaryScreen from '../screens/InventorySummaryScreen';
 import InventoryManagementContainer from '../containers/InventoryManagementContainer';
 import OrderManagementContainer from '../containers/OrderManagementContainer';
 import OrderContainer from '../containers/OrderContainer';
+
 import { colors } from '../styles/colors';
 import { fonts } from '../styles/fonts';
 
@@ -14,13 +15,6 @@ InventoryManagementContainer.navigationOptions = {
     tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'edit'} size={focused ? 18 : 14} color={tintColor} />
 };
 
-/*
-OrderManagementContainer.navigationOptions = {
-    title: 'ORDERS',
-    tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'shopping-bag'} size={focused ? 18 : 14} color={tintColor} />
-};
-*/
-
 const TodayNavigator = createStackNavigator({
     InventorySummary: InventorySummaryScreen,
     TakeOrder: OrderContainer
@@ -28,7 +22,7 @@ const TodayNavigator = createStackNavigator({
     initialRouteName: 'InventorySummary',
     navigationOptions: {
         title: 'TODAY',
-        tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
+        tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />,
     },
     mode: 'modal',
     headerMode: 'none',
@@ -44,10 +38,10 @@ const OrderManagementNavigator = createStackNavigator({
   initialRouteName: 'OrderManagement',
   navigationOptions: {
       title: 'ORDERS',
-      tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />
+      tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />,
   },
   mode: 'modal',
-  headerMode: 'none',
+  headerMode: 'float',
   cardStyle: {
       backgroundColor: colors.background
   }

@@ -41,7 +41,7 @@ const OrderManagementNavigator = createStackNavigator({
       tabBarIcon: ({focused, tintColor}) => <FontAwesome5 name={'store'} size={focused ? 18 : 14} color={tintColor} />,
   },
   mode: 'modal',
-  headerMode: 'float',
+  headerMode: 'none',
   cardStyle: {
       backgroundColor: colors.background
   }

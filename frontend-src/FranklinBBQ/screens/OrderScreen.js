@@ -76,6 +76,17 @@ const OrderScreen = ({
                     </View>
                     : null
                   }
+                  {editMode ? null:
+                  <Button
+                    mode='contained'
+                    onPress={() => {
+                        navigation.navigate('OrderManagement');
+                    }}
+                    style={OrderStyles.button.container}
+                >
+                    <Text style={OrderStyles.button.label}>BACK</Text>
+                  </Button>
+                  }
                 </View>
             </View>
         </DismissableKeyboard>

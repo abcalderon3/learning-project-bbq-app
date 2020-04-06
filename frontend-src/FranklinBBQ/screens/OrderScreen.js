@@ -93,17 +93,17 @@ const OrderScreen = ({
     );
 };
 
-const PartySizeInput = ({ partySize, handlePartySizeChange, theme, editMode }) => {
-    const handlePartySizeInput = (event) => {
-        handlePartySizeChange(parseInt(event.nativeEvent.text));
+const PartySizeInput = ({ partySize = 0, handlePartySizeChange, theme, editMode }) => {
+    const handlePartySizeInput = (text) => {
+        handlePartySizeChange(parseInt(text));
     };
 
     return (
         <View style={OrderStyles.partySizeInputStyles.container}>
             <Text style={OrderStyles.partySizeInputStyles.label}>Party Size</Text>
             <TextInputPaper
-                value={(partySize || 0).toString()}
-                onEndEditing={handlePartySizeInput}
+                value={partySize.toString()}
+                onChangeText={handlePartySizeInput}
                 onBlur={() => Keyboard.dismiss()}
                 mode='outlined'
                 keyboardType='numeric'

@@ -16,7 +16,6 @@ const OrderScreen = ({
     cudItemInOrder,
     submitNewOrder,
     navigation,
-    navRoute,
     existingOrderId = false,
 }) => {
     const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
@@ -67,7 +66,7 @@ const OrderScreen = ({
                           mode='contained'
                           onPress={() => {
                               submitNewOrder();
-                              navigation.navigate(navRoute);
+                              navigation.navigate('InventorySummary');
                           }}
                           style={OrderStyles.button.container}
                       >

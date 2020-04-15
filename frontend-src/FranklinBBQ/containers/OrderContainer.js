@@ -5,31 +5,6 @@ import OrderScreen from '../screens/OrderScreen';
 import { joinInventoryItemsRef } from '../utils/dataHelpers';
 import { orderActions } from '../redux/actions';
 
-const IntermediateOrderScreen = ({
-  inventoryItems,
-  newOrder,
-  editPartySize,
-  cudItemInOrder,
-  submitNewOrder,
-  navigation,
-  existingOrderId
-  }) => {
-  const navRoute = 'InventorySummary';
-
-  return (
-    <OrderScreen
-      inventoryItems={inventoryItems}
-      newOrder={newOrder}
-      editPartySize={editPartySize}
-      cudItemInOrder={cudItemInOrder}
-      submitNewOrder={submitNewOrder}
-      navigation={navigation}
-      navRoute={navRoute}
-      existingOrderId={existingOrderId}
-    />
-  )
-}
-
 const mapStateToProps = (state, { navigation }) => {
     let inventoryItems;
     if (state.firestore.data.daily_inventories && state.firestore.data.item_ref) {
@@ -64,6 +39,6 @@ const mapStateToProps = (state, { navigation }) => {
     };
 };
 
-const OrderContainer = connect(mapStateToProps, orderActions)(IntermediateOrderScreen);
+const OrderContainer = connect(mapStateToProps, orderActions)(OrderScreen);
 
 export default OrderContainer;

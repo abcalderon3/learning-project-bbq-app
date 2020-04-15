@@ -8,16 +8,18 @@ import * as OrderStyles from '../styles/OrderStyles';
 import { dynamicQtyBackgroundColor } from '../styles/dynamicQuantityColor';
 import { colors } from '../styles/colors';
 
-const OrderScreen = ({ 
-    inventoryItems, 
-    newOrder = {items: []}, 
-    theme, 
+const OrderScreen = ({
+    inventoryItems,
+    newOrder = {items: []},
+    theme,
     editPartySize,
     cudItemInOrder,
     submitNewOrder,
     navigation,
+    existingOrderId = false,
 }) => {
     const [itemsOrderStatus, setItemsOrderStatus] = useState([]);
+    const editMode = existingOrderId ? false : true;
 
     useEffect(() => {
         setItemsOrderStatus(inventoryItems.map((item) => {
@@ -53,40 +55,60 @@ const OrderScreen = ({
     return (
         <DismissableKeyboard>
             <View style={{flex: 1}}>
-                <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} />
-                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
-                <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
-                <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
-                <Button 
-                    mode='contained' 
+                <PartySizeInput partySize={newOrder.party_size} handlePartySizeChange={editPartySize} theme={theme} editMode={editMode} />
+                <OrderDrawer newOrderItems={itemsOrderStatus.filter(item => item.status === 'in_order')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} editMode={editMode}/>
+                <View>
+                  {editMode ?
+                    <View>
+                      <SelectedDrawer selectedItems={itemsOrderStatus.filter(item => item.status === 'selected')} changeOrderItemStatus={onChangeOrderItemStatus} cudItemInOrder={cudItemInOrder} />
+                      <AvailableDrawer availableItems={itemsOrderStatus.filter(item => item.status === 'available')} changeOrderItemStatus={onChangeOrderItemStatus} />
+                      <Button
+                          mode='contained'
+                          onPress={() => {
+                              submitNewOrder();
+                              navigation.navigate('InventorySummary');
+                          }}
+                          style={OrderStyles.button.container}
+                      >
+                          <Text style={OrderStyles.button.label}>SAVE</Text>
+                      </Button>
+                    </View>
+                    : null
+                  }
+                  {editMode ? null:
+                  <Button
+                    mode='contained'
                     onPress={() => {
-                        submitNewOrder();
-                        navigation.navigate('InventorySummary');
-                    }} 
+                        navigation.navigate('OrderManagement');
+                    }}
                     style={OrderStyles.button.container}
                 >
-                    <Text style={OrderStyles.button.label}>SAVE</Text>
-                </Button>
+                    <Text style={OrderStyles.button.label}>BACK</Text>
+                  </Button>
+                  }
+                </View>
             </View>
         </DismissableKeyboard>
     );
 };
 
-const PartySizeInput = ({ handlePartySizeChange, theme }) => {
-    const handlePartySizeInput = (event) => {
-        handlePartySizeChange(parseInt(event.nativeEvent.text));
+const PartySizeInput = ({ partySize = 0, handlePartySizeChange, theme, editMode }) => {
+    const handlePartySizeInput = (text) => {
+        handlePartySizeChange(parseInt(text));
     };
 
     return (
         <View style={OrderStyles.partySizeInputStyles.container}>
             <Text style={OrderStyles.partySizeInputStyles.label}>Party Size</Text>
             <TextInputPaper
-                onEndEditing={handlePartySizeInput}
+                value={partySize.toString()}
+                onChangeText={handlePartySizeInput}
                 onBlur={() => Keyboard.dismiss()}
                 mode='outlined'
                 keyboardType='numeric'
                 clearTextOnFocus={true}
-                autoFocus={true}
+                autoFocus={editMode}
+                disabled={!editMode}
                 style={OrderStyles.partySizeInputStyles.textInput}
                 selectionColor={theme.colors.secondary}
                 theme={{ colors: { primary: theme.colors.secondary, placeholder: theme.colors.primary } }}
@@ -95,9 +117,9 @@ const PartySizeInput = ({ handlePartySizeChange, theme }) => {
     );
 };
 
-const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder }) => {
+const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemStatus, cudItemInOrder, editMode = true }) => {
     return itemList.map(item => (
-        <ListItem 
+        <ListItem
             status={status}
             key={item.item_id}
             itemId={item.item_id}
@@ -106,17 +128,19 @@ const itemListMapping = ({itemList, status, displayQuantityKey, changeOrderItemS
             currentPercRemaining={item.current_perc_remaining}
             changeOrderItemStatus={changeOrderItemStatus}
             cudItemInOrder={cudItemInOrder}
+            editMode={editMode}
         />
     ));
 };
 
-const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder }) => {
+const OrderDrawer = ({ newOrderItems, changeOrderItemStatus, cudItemInOrder, editMode }) => {
     const args = {
         itemList: newOrderItems,
         status: 'in_order',
         displayQuantityKey: 'item_quantity_ordered',
         changeOrderItemStatus,
         cudItemInOrder,
+        editMode,
     };
 
     return (
@@ -150,14 +174,15 @@ const AvailableDrawer = ({ availableItems, changeOrderItemStatus, }) => {
     );
 };
 
-const ListItem = withTheme(({ 
-    status, 
-    itemId, 
-    itemDisplayName, 
-    displayQuantity, 
+const ListItem = withTheme(({
+    status,
+    itemId,
+    itemDisplayName,
+    displayQuantity,
     currentPercRemaining,
     changeOrderItemStatus,
     cudItemInOrder,
+    editMode,
     theme,
 }) => {
     const completeItemSelection = (event) => {
@@ -182,7 +207,7 @@ const ListItem = withTheme(({
         case 'available':
             listItemPropValues.leftIcon = 'plus-circle';
             listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <View style={[OrderStyles.listItemStyles.displayQuantityContainer, dynamicQtyBackgroundColor(currentPercRemaining)]}>
                     {listItemPropValues.rightNode}
                 </View>;
@@ -191,7 +216,7 @@ const ListItem = withTheme(({
             listItemPropValues.style.push(OrderStyles.listItemStyles.listItemSelected);
             listItemPropValues.leftIcon = 'arrow-alt-circle-up';
             listItemPropValues.leftIconColor = colors.secondary;
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <TextInput
                     onEndEditing={completeItemSelection}
                     onBlur={() => Keyboard.dismiss()}
@@ -205,19 +230,25 @@ const ListItem = withTheme(({
             listItemPropValues.style.push(OrderStyles.listItemStyles.listItemOrdered);
             listItemPropValues.leftIcon = 'check-circle';
             listItemPropValues.leftIconColor = colors.primary;
-            listItemPropValues.rightNode = 
+            listItemPropValues.rightNode =
                 <View style={OrderStyles.listItemStyles.orderedQuantityContainer}>
                     <View style={[OrderStyles.listItemStyles.displayQuantityContainer]}>
                         {listItemPropValues.rightNode}
                     </View>
-                    <IconButton
+                    <View>
+                      {
+                        editMode ?
+                        <IconButton
                         icon={props => <FontAwesome5 name='minus-circle' {...props} />}
                         color={colors.destructiveAction}
                         onPress={() => deleteItem()}
-                    />
+                        />
+                        : null
+                      }
+                    </View>
                 </View>;
-            listItemPropValues.onPress = () => changeOrderItemStatus(itemId, 'selected');
-            deleteButton = 
+            listItemPropValues.onPress = () => editMode ? changeOrderItemStatus(itemId, 'selected') : null;
+            deleteButton =
                 <IconButton
                     icon={props => <FontAwesome5 name='minus-circle' {...props} />}
                     color={colors.destructiveAction}
@@ -227,7 +258,7 @@ const ListItem = withTheme(({
     }
 
     return (
-        <List.Item 
+        <List.Item
             title={itemDisplayName}
             left={props => <List.Icon {...props} color={listItemPropValues.leftIconColor} icon={props => <FontAwesome5 name={listItemPropValues.leftIcon} {...props} />} />}
             right={props => listItemPropValues.rightNode}
